@@ -1,6 +1,8 @@
 {{- define "oneuptime.env.common" }}
 - name: HOST
   value: {{ $.Values.host }}
+- name: HTTP_PROTOCOL
+  value: {{ $.Values.httpProtocol }}
 - name: NODE_ENV
   value: {{ $.Values.nodeEnvironment }}
 - name: BILLING_ENABLED
@@ -185,6 +187,10 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   name: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
   namespace: {{ $.Release.Namespace }}
+  annotations:
+  {{- if $.IsMetalLbEnabled }}
+    metallb.universe.tf/address-pool: {{ printf "%s-%s" $.Release.Name "metallb-address-pool"  }}
+  {{- end }}
 spec:
   {{- if $.LoadBalancerIP }}
   loadBalancerIP: {{ $.LoadBalancerIP }}

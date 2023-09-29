@@ -4,9 +4,7 @@ global:
 
 # Please change this to the domain name / IP where OneUtpime server is hosted on. 
 host: localhost
-
-# You can safely ignore values below this line. 
-# ------------------------------------------------
+httpProtocol: http
 
 volume: 
   certs: 
@@ -14,6 +12,13 @@ volume:
 
 deployment: 
   replicaCount: 1
+
+metalLb: 
+  enabled: false
+  ipAdddressPool: 
+    enabled: false
+    addresses: 
+      # - 51.158.55.153/32
 
 ingress:
   service: 
