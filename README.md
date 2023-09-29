@@ -77,51 +77,37 @@ The following table lists the configurable parameters of the OneUptime chart and
 | Parameter | Description | Default | Change Required |
 | --------- | ----------- | ------- | --------------- |
 | `global.storageClass` | Storage class to be used for all persistent volumes | `nil` | ✅ |
- 
 | `host` | Hostname for the ingress | `localhost` | ✅ |
-
+| `httpProtocol` | If the server is hosted with SSL/TLS cert then change this value to https | `http` | ✅ |
 | `image.registry` | Docker image registry | `docker.io` |  |
 | `image.repository` | Docker image repository | `oneuptime` | |
 | `image.tag` | Docker image tag | `release` |
 | `image.pullPolicy` | Docker image pull policy | `IfNotPresent` | |
 | `image.restartPolicy` | Docker image restart policy | `Always` | |
-
 | `secrets.oneuptime` | Secret for OneUptime | `please-change-this-to-random-value` | ✅ |
 | `secrets.encryption` | Secret for Encryption | `please-change-this-to-random-value` | ✅ |
-
 | `autoScaling.enabled` | Enable autoscaling | `false` | |
 | `autoScaling.minReplicas` | Minimum number of replicas | `1` | |
 | `autoScaling.maxReplicas` | Maximum number of replicas | `100` | |
 | `autoScaling.targetCPUUtilizationPercentage` | Target CPU utilization percentage | `80` | |
 | `autoScaling.targetMemoryUtilizationPercentage` | Target memory utilization percentage | `80` | |
-
 | `nodeEnvironment` | Node environment (please dont change this unless you're doing local development) | `production` | |
-
 | `ingress.service.type` | Ingress service type | `LoadBalancer` | |
 | `ingress.service.loadBalancerIP` | Ingress service load balancer IP | `nil` | |
-
 | `deployment.replicaCount` | Number of replicas | `1` | |
-
-
 | `probe.<key>.name` | Probe name | `<key>` | |
 | `probe.<key>.description` | Probe description | `nil` | |
 | `probe.<key>.monitoringWorkers` | Number of threads / parallel processes you need to monitor your resources | `3` | |
 | `probe.<key>.monitorFetchLimit` | Number of resources to be monitored in parallel | `10` | |
 | `probe.<key>.key` | Probe authentication key | `please-change-this-to-random-value` | ✅ |
-
-
 | `statusPage.cnameRecord` | CNAME record for the status page | `nil` | |
-
 | `internalSmtp.password` | Pick any random secure password. It just secures the internal SMTP Server | `nil` | ✅ |
 | `internalSmtp.sendingDomain` | Domain to send emails from  | `nil` |  |
 | `internalSmtp.dkimPrivateKey` | DKIM Private Key that is set for sending domain | `nil` |  |
 | `internalSmtp.dkimPublicKey` | DKIM Public Key that is set for sending domain | `nil` |  |
 | `internalSmtp.email` | Email address to send emails from | `nil` |  |
 | `internalSmtp.name` | Name to send emails from | `nil` |  |
-
-
 | `incidents.disableAutomaticCreation` | Disable incident creation (use this when your team is overloaded with incidents or in emergencies) | `false` |  |
-
 
 ## Chart Dependencies
 

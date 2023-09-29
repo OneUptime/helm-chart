@@ -2,8 +2,32 @@ apiVersion: v1
 entries:
   oneuptime:
   - apiVersion: v2
+    appVersion: 7.0.810
+    created: "2023-09-29T16:46:24.224952593Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.12.5
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.1.0
+    - name: clickhouse
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.0.2
+    - name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.8.9
+    description: OneUptime Helm chart for Kubernetes
+    digest: 2632130fb870aff3e32edf5f4749604b3b83bf83cacfa34038dd307e8d3c8b59
+    icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/public/img/OneUptimePNG/1.png
+    name: oneuptime
+    type: application
+    urls:
+    - oneuptime-7.0.810.tgz
+    version: 7.0.810
+  - apiVersion: v2
     appVersion: 7.0.804
-    created: "2023-09-29T13:21:01.774079847Z"
+    created: "2023-09-29T16:46:24.199858812Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -27,7 +51,7 @@ entries:
     version: 7.0.804
   - apiVersion: v2
     appVersion: 7.0.797
-    created: "2023-09-29T13:21:01.75112073Z"
+    created: "2023-09-29T16:46:24.176133436Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -51,7 +75,7 @@ entries:
     version: 7.0.797
   - apiVersion: v2
     appVersion: 7.0.796
-    created: "2023-09-29T13:21:01.727288008Z"
+    created: "2023-09-29T16:46:24.153283863Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -73,4 +97,4 @@ entries:
     urls:
     - oneuptime-7.0.796.tgz
     version: 7.0.796
-generated: "2023-09-29T13:21:01.703250385Z"
+generated: "2023-09-29T16:46:24.128013182Z"
