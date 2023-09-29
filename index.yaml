@@ -1,9 +1,40 @@
 apiVersion: v1
 entries:
   oneuptime:
+  - annotations:
+      artifacthub.io/category: monitoring-logging
+      artifacthub.io/license: MIT
+      artifacthub.io/prerelease: "false"
+      artifacthub.io/signKey: |
+        fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+        url: https://keybase.io/oneuptime/pgp_keys.asc
+    apiVersion: v2
+    appVersion: 7.0.814
+    created: "2023-09-29T20:44:02.595177405Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.12.5
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.1.0
+    - name: clickhouse
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.0.2
+    - name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.8.9
+    description: OneUptime Helm chart for Kubernetes
+    digest: 6caaa2a357abd1b34f480548b60b2c3cf65de4b874cf7bcc65eec4b46eeb4010
+    icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/public/img/OneUptimePNG/1.png
+    name: oneuptime
+    type: application
+    urls:
+    - oneuptime-7.0.814.tgz
+    version: 7.0.814
   - apiVersion: v2
     appVersion: 7.0.810
-    created: "2023-09-29T16:46:24.224952593Z"
+    created: "2023-09-29T20:44:02.569625789Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -27,7 +58,7 @@ entries:
     version: 7.0.810
   - apiVersion: v2
     appVersion: 7.0.804
-    created: "2023-09-29T16:46:24.199858812Z"
+    created: "2023-09-29T20:44:02.541567352Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -51,7 +82,7 @@ entries:
     version: 7.0.804
   - apiVersion: v2
     appVersion: 7.0.797
-    created: "2023-09-29T16:46:24.176133436Z"
+    created: "2023-09-29T20:44:02.514634425Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -75,7 +106,7 @@ entries:
     version: 7.0.797
   - apiVersion: v2
     appVersion: 7.0.796
-    created: "2023-09-29T16:46:24.153283863Z"
+    created: "2023-09-29T20:44:02.487485895Z"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -97,4 +128,4 @@ entries:
     urls:
     - oneuptime-7.0.796.tgz
     version: 7.0.796
-generated: "2023-09-29T16:46:24.128013182Z"
+generated: "2023-09-29T20:44:02.459149756Z"
