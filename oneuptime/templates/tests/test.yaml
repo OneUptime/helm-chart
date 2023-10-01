@@ -7,10 +7,10 @@ metadata:
 spec:
   containers:
     - name: oneptime-test
+      imagePullPolicy: {{ $.Values.image.pullPolicy }}
       image: {{ printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repository "test" .Values.image.tag }}
       command: ['/bin/sh']
       args: ["-c", 
-      "Scripts/status-check.sh", 
-      "{{ $.Release.Name }}-nginx.{{ $.Release.Namespace }}.svc.cluster.local"
+      "Scripts/status-check.sh {{ $.Values.httpProtocol }}://{{ $.Values.host }}",
       ]
   restartPolicy: Never
