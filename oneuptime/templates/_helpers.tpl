@@ -93,11 +93,6 @@
 {{- end }}
 
 
-{{- define "oneuptime.env.probe-api-url" }}
-{{ $.Release.Name }}-probe-api.{{ $.Release.Namespace }}.svc.cluster.local
-{{- end}}
-
-
 {{- define "oneuptime.env.commonUi" }}
 - name: IS_SERVER
   value: {{ printf "false" | squote }}
@@ -111,27 +106,39 @@
   value: {{ printf "true" | squote }}
 
 - name: ONEUPTIME_SECRET
-  value: {{ $.Values.secrets.oneuptime }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
+      key: oneuptime-secret
 - name: ENCRYPTION_SECRET
-  value: {{ $.Values.secrets.encryption }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
+      key: encryption-secret
 
 - name: CLICKHOUSE_USER
-  value: {{ $.Values.clickhouse.auth.user }}
+  value: {{ $.Values.clickhouse.auth.username }}
 - name: CLICKHOUSE_PASSWORD
-  value: {{ $.Values.clickhouse.auth.password }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "clickhouse"  }}
+        key: admin-password
 - name: CLICKHOUSE_HOST
   value: {{ $.Release.Name }}-clickhouse.{{ $.Release.Namespace }}.svc.cluster.local
 - name: CLICKHOUSE_PORT
   value: {{ printf "8123" | squote}}
 - name: CLICKHOUSE_DATABASE
-  value: {{ $.Values.clickhouse.database }}
+  value: {{ printf "oneuptime" | squote}}
 
 - name: REDIS_HOST
   value: {{ $.Release.Name }}-redis-master.{{ $.Release.Namespace }}.svc.cluster.local
 - name: REDIS_PORT
   value: {{ printf "6379" | squote}}
 - name: REDIS_PASSWORD
-  value: {{ $.Values.redis.auth.password }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "redis"  }}
+        key: redis-password
 - name: REDIS_DB
   value: {{ printf "0" | squote}}
 - name: REDIS_USERNAME
@@ -144,7 +151,10 @@
 - name: DATABASE_USERNAME
   value: {{ $.Values.postgresql.auth.username }}
 - name: DATABASE_PASSWORD 
-  value: {{ $.Values.postgresql.auth.password }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "postgresql"  }}
+        key: password
 - name: DATABASE_DATABASE 
   value: {{ $.Values.postgresql.auth.database }}
 
@@ -241,7 +251,7 @@ spec:
       {{- range $key, $val := $.Volumes }}
         - name: {{ $key }}
           persistentVolumeClaim:
-            claimName: {{ $val }}
+            claimName: {{ $val.Name }}
       {{- end }}
       {{- end }}
       containers:
@@ -266,6 +276,13 @@ spec:
               value: {{ $val | squote }}
             {{- end }}
             {{- end }}
+          {{- if $.Volumes }}
+          volumeMounts:
+            {{- range $key, $val := $.Volumes }}
+            - name: {{ $key }}
+              mountPath: {{ $val.MountPath }}
+            {{- end }}
+          {{- end }}
           {{- if $.Port }}
           ports:
             - containerPort: {{ $.Port }}
