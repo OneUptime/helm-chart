@@ -1,7 +1,6 @@
 # Helm Chart for OneUptime
 
 This repository is used to host all the helm-charts for OneUptime.
-sample
 
 ### Helm Packages 
 
