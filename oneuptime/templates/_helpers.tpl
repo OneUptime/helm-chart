@@ -17,8 +17,6 @@
   value: {{ $.Values.subscriptionPlan.scale }}
 - name: SUBSCRIPTION_PLAN_ENTERPRISE
   value: {{ $.Values.subscriptionPlan.enterprise }}
-- name: METERED_PLAN_ACTIVE_MONITORING
-  value: {{ $.Values.meteredPlan.activeMonitoring }}
 - name: ANALYTICS_KEY
   value: {{ $.Values.analytics.key }}
 - name: ANALYTICS_HOST
@@ -33,14 +31,8 @@
   value: {{ $.Release.Name }}-ingestor.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_TEST_SERVER_HOSTNAME
   value: {{ $.Release.Name }}-test-server.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
-- name: SERVER_FILE_HOSTNAME
-  value: {{ $.Release.Name }}-file.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_HOME_HOSTNAME
   value: {{ $.Release.Name }}-home.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
-- name: SERVER_IDENTITY_HOSTNAME
-  value: {{ $.Release.Name }}-identity.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
-- name: SERVER_NOTIFICATION_HOSTNAME
-  value: {{ $.Release.Name }}-notification.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: OTEL_COLLECTOR_HOSTNAME
   value: {{ $.Release.Name }}-otel-collector.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_WORKERS_HOSTNAME
