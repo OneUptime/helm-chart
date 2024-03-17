@@ -66,23 +66,38 @@
   value: {{ printf "false" | squote }}
 - name: STATUS_PAGE_CNAME_RECORD
   value: {{ $.Values.statusPage.cnameRecord }}
+- name: OPENTELEMETRY_EXPORTER_OTLP_ENDPOINT
+  value: {{ $.Values.openTelemetryExporter.endpoint.client }}
 {{- end }}
 
+{{- define "oneuptime.env.oneuptimeSecret" }}
+- name: ONEUPTIME_SECRET
+  {{- if $.Values.oneuptimeSecret }}
+  value: {{ $.Values.oneuptimeSecret }}
+  {{- else }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
+      key: oneuptime-secret
+  {{- end }}
+{{- end }}
 
 {{- define "oneuptime.env.commonServer" }}
 - name: IS_SERVER
   value: {{ printf "true" | squote }}
 
-- name: ONEUPTIME_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
-      key: oneuptime-secret
+- name: OPENTELEMETRY_EXPORTER_OTLP_ENDPOINT
+  value: {{ $.Values.openTelemetryExporter.endpoint.server }}
+
 - name: ENCRYPTION_SECRET
+  {{- if $.Values.encryptionSecret }}
+  value: {{ $.Values.encryptionSecret }}
+  {{- else }}
   valueFrom:
     secretKeyRef:
       name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
       key: encryption-secret
+  {{- end }}
 
 - name: CLICKHOUSE_USER
   value: {{ $.Values.clickhouse.auth.username }}
@@ -117,12 +132,12 @@
 - name: DATABASE_PORT 
   value: {{ printf "5432" | squote}}
 - name: DATABASE_USERNAME
-  value: {{ $.Values.postgresql.auth.username }}
+  value: postgres
 - name: DATABASE_PASSWORD 
   valueFrom: 
     secretKeyRef:
         name: {{ printf "%s-%s" $.Release.Name "postgresql"  }}
-        key: password
+        key: postgres-password
 - name: DATABASE_DATABASE 
   value: {{ $.Values.postgresql.auth.database }}
 
@@ -246,6 +261,7 @@ spec:
             {{- end }}
             {{- if $.IsServer  }}
             {{- include "oneuptime.env.commonServer" . | nindent 12 }}
+            {{- include "oneuptime.env.oneuptimeSecret" . | nindent 12 }}
             {{- end }}
             {{- if $.Env }}
             {{- range $key, $val := $.Env }}
