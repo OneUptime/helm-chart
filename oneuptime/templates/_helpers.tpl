@@ -109,7 +109,7 @@
 - name: CLICKHOUSE_HOST
   value: {{ $.Release.Name }}-clickhouse.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: CLICKHOUSE_PORT
-  value: {{ printf "8123" | squote}}
+  value: {{ printf "%s" $.Values.clickhouse.service.ports.http | squote }}
 - name: CLICKHOUSE_DATABASE
   value: {{ printf "oneuptime" | squote}}
 
@@ -130,7 +130,7 @@
 - name: DATABASE_HOST
   value: {{ $.Release.Name }}-postgresql.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: DATABASE_PORT 
-  value: {{ printf "5432" | squote}}
+  value: {{ printf "%s" $.Values.postgresql.primary.service.ports.postgresql | squote }}
 - name: DATABASE_USERNAME
   value: postgres
 - name: DATABASE_PASSWORD 
