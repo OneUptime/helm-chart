@@ -238,11 +238,8 @@ spec:
         date: "{{ now | unixEpoch }}"
         appname: oneuptime
     spec:
-      {{- if $.Values.securityContext.enabled }}
-      securityContext:
-        runAsUser: {{ $.Values.securityContext.runAsUser }}
-        runAsGroup: {{ $.Values.securityContext.runAsGroup }}
-        fsGroup: {{ $.Values.securityContext.fsGroup }}
+      {{- if $.Values.podSecurityContext }}
+      securityContext: {{- $.Values.podSecurityContext | toYaml | nindent 8 }}
       {{- end }}
       {{- if $.Volumes }}
       volumes:
@@ -259,6 +256,9 @@ spec:
         - image: {{ printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repository $.ServiceName .Values.image.tag }}
         {{- end}}
           name: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
+          {{- if $.Values.containerSecurityContext }}
+          securityContext: {{- $.Values.containerSecurityContext | toYaml | nindent 12 }}
+          {{- end }}
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
             {{- include "oneuptime.env.common" . | nindent 12 }}

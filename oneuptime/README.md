@@ -86,18 +86,8 @@ The following table lists the configurable parameters of the OneUptime chart and
 | `internalSmtp.email` | Email address to send emails from | `nil` |  |
 | `internalSmtp.name` | Name to send emails from | `nil` |  |
 | `incidents.disableAutomaticCreation` | Disable incident creation (use this when your team is overloaded with incidents or in emergencies) | `false` |  |
-
-
-### Security Context
-
-The Security Context section allows you to configure security settings for the OneUptime chart.
-
-| Parameter | Description | Default |
-| --------- | ----------- | ------- |
-| `securityContext.enabled` | Enable security context | `false` |
-| `securityContext.runAsUser` | User ID to run as |  |
-| `securityContext.runAsGroup` | Group ID to run as | |
-| `securityContext.fsGroup` | Group ID that owns the pod's volumes |  |
+| `podSecurityContext` | Pod Security Context. Please refer to Kubernetes docuemntation to set these. This chart depends on other bitnami charts. You will have to set security context for those as well | `{}` |  |
+| `conatinerSecurityContext` | Container Security Context. Please refer to kubernetes documentation to set these. This chart depends on other bitnami charts. You will have to set security context for those as well | `{}` |  |
 
 ## Adding a Custom Domain to your Status Page
 

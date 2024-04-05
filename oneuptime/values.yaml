@@ -175,9 +175,8 @@ openTelemetryExporter:
     probe: 
     adminDashboard:
 
-securityContext:
-  enabled: false
-  runAsUser: 
-  runAsGroup: 
-  fsGroup: 
+containerSecurityContext:
+podSecurityContext:
+
+
   
