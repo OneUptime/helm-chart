@@ -201,15 +201,14 @@ spec:
     - {{ $val }}
     {{- end }}
   {{- end }}
+  {{- if $.Ports }}
   ports:
-    - port: {{ $.Port }}
-      targetPort: {{ $.Port }}
-      name: port
-    {{- if $.isHTTPSPortEnabled }}
-    - port: 443
-      targetPort: 443
-      name: https
+    {{- range $key, $val := $.Ports }}
+    - port: {{ $val }}
+      targetPort: {{ $val }}
+      name: {{ $key }}
     {{- end }}
+  {{- end }}
   selector:
       app: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
   {{- if $.ServiceType }}
@@ -288,16 +287,13 @@ spec:
               mountPath: {{ $val.MountPath }}
             {{- end }}
           {{- end }}
-          {{- if $.Port }}
+          {{- if $.Ports }}
           ports:
-            - containerPort: {{ $.Port }}
+            {{- range $key, $val := $.Ports }}
+            - containerPort: {{ $val }}
               protocol: TCP
-              name: http
-              {{- if $.isHTTPSPortEnabled }}
-            - containerPort: 443
-              protocol: TCP
-              name: https
-              {{- end }}
+              name: {{ $key }}
+            {{- end }}
           {{- end }}
       restartPolicy: {{ $.Values.image.restartPolicy }}
 {{- end }}
