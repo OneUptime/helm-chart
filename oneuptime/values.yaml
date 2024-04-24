@@ -178,6 +178,8 @@ openTelemetryExporter:
     statusPage:
     probe: 
     adminDashboard:
+    ingestor:
+    ingress:
 
 containerSecurityContext:
 podSecurityContext:
@@ -188,4 +190,9 @@ nodeSelector:
 
 # This can be one of the following: DEBUG, INFO, WARN, ERROR
 logLevel: ERROR
+
+# Enable cleanup cron jobs
+cronJobs:
+  cleanup:
+    enabled: false
   
