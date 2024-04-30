@@ -7,6 +7,9 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels: 
     appname: oneuptime
+    app.kubernetes.io/part-of: oneuptime
+    app.kubernetes.io/managed-by: Helm
+    date: "{{ now | unixEpoch }}"
 spec:
   schedule: "*/5 * * * *" # At every 5 minute.
   jobTemplate:
@@ -17,6 +20,7 @@ spec:
           containers:
           - name: cleanup
             image: bitnami/kubectl:latest
+            imagePullPolicy: {{ $.Values.image.pullPolicy }}
             env:
             - name: namespace
               value: {{ $.Release.Namespace }}
@@ -31,7 +35,7 @@ spec:
                     kubectl delete pod $pod -n $namespace
                     fi
                 done
-              
+          
           restartPolicy: OnFailure
 
 ---
@@ -47,6 +51,9 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels: 
     appname: oneuptime
+    app.kubernetes.io/part-of: oneuptime
+    app.kubernetes.io/managed-by: Helm
+    date: "{{ now | unixEpoch }}"
 spec:
   schedule: "*/2 * * * *" # At every 2 minute.
   jobTemplate:
@@ -57,6 +64,7 @@ spec:
           containers:
           - name: cleanup
             image: bitnami/kubectl:latest
+            imagePullPolicy: {{ $.Values.image.pullPolicy }}
             env:
             - name: namespace
               value: {{ $.Release.Namespace }}

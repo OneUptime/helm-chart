@@ -138,6 +138,9 @@ probes:
     monitorFetchLimit: 10
     key:
     replicaCount: 1 
+    # Feel free to leave this blank if you're not integrating this with OpenTelemetry Backend.
+    openTelemetryExporter: 
+      headers:
   # two: 
   #   name: "Probe 2"
   #   description: "Probe 2"
@@ -145,6 +148,8 @@ probes:
   #   monitorFetchLimit: 10
   #   key:
   #   replicaCount: 1
+  #   openTelemetryExporter:
+  #     headers:
 
 port: 
   app: 3002
@@ -172,11 +177,10 @@ openTelemetryExporter:
     server:
     client:
   headers: 
-    app:
+    app: 
     dashboard:
     accounts:
     statusPage:
-    probe: 
     adminDashboard:
     ingestor:
     ingress:
@@ -200,4 +204,10 @@ cronJobs:
     isUserRegistered: false
     registeredUserEmail: 
     registeredUserPassword:
+    # This is the URL of the status page you want to test. This is used to check if the status page is up and running.
+    statusPageUrl:
+    failedWebhookUrl: 
   
+
+notifications: 
+  letsEncryptEmail:
