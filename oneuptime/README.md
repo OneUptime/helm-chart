@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD033 -->
-<h1 align="center"><img alt="oneuptime logo" width=50% src="https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/public/img/OneUptimePNG/7.png"/></h1>
+<h1 align="center"><img alt="oneuptime logo" width=50% src="https://raw.githubusercontent.com/OneUptime/oneuptime/master/App/FeatureSet/Home/Static/img/OneUptimePNG/7.png"/></h1>
 <!-- markdownlint-enable MD033 -->
 
 # OneUptime Helm Chart
@@ -48,7 +48,7 @@ helm install my-oneuptime oneuptime/oneuptime -f values.yaml
 ## Uninstall Helm Chart
 
 ```console
-helm uninstall my-release
+helm uninstall my-oneuptime
 ```
 
 ## Configuration
@@ -72,8 +72,8 @@ The following table lists the configurable parameters of the OneUptime chart and
 | `autoScaling.targetCPUUtilizationPercentage` | Target CPU utilization percentage | `80` | |
 | `autoScaling.targetMemoryUtilizationPercentage` | Target memory utilization percentage | `80` | |
 | `nodeEnvironment` | Node environment (please dont change this unless you're doing local development) | `production` | |
-| `ingress.service.type` | Ingress service type | `LoadBalancer` | |
-| `ingress.service.loadBalancerIP` | Ingress service load balancer IP | `nil` | |
+| `nginx.service.type` | nginx service type | `LoadBalancer` | |
+| `nginx.service.loadBalancerIP` | nginx service load balancer IP | `nil` | |
 | `deployment.replicaCount` | Number of replicas | `1` | |
 | `probe.<key>.name` | Probe name | `<key>` | |
 | `probe.<key>.description` | Probe description | `nil` | |
@@ -92,6 +92,12 @@ The following table lists the configurable parameters of the OneUptime chart and
 | `nodeSelector` | Node Selector. Please refer to Kubernetes documentation on how to use them. | `{}` |  |
 | `tolerations` | Tolerations. Please refer to Kubernetes documentation on how to use them. | `[]` |  |
 | `affinity` | Affinity. Please refer to Kubernetes documentation on how to use them. | `{}` |  |
+| `extraTemplates` | Extra templates to be added to the deployment | `[]` |  |
+| `ingress.enabled` | Enable ingress | `true` |  |
+| `ingress.annotations` | Ingress annotations | `{}` |  |
+| `ingress.hosts` | Ingress hosts | `[]` |  |
+| `ingress.tls` | Ingress TLS. Please refer to values.yaml to set these | `[]` |  |
+| `ingress.className` | Ingress class name. Change this to your cloud providers ingress class | `nginx` |  |
 
 
 ## Adding a Custom Domain to your Status Page
@@ -118,6 +124,51 @@ Please go to your project settings and add the custom domain to your project. Yo
 Please go to your status page settings and add the custom domain to your status page. You can find the status page settings by clicking on "View Status Page" in "Status Pages" page. You can add the custom domain in the "Custom Domain" page in your status page settings. 
 
 Once you have added the custom domain, you can access your status page using the custom domain.
+
+## Production Readiness Checklist
+
+Please go through the following checklist to make sure your OneUptime installation is production ready.
+
+- [ ] Please pin OneUptime version to a specific version. This will prevent any breaking changes from affecting your installation.
+
+When you install, you can check the latest version from the github releases page https://github.com/OneUptime/oneuptime/releases. You can pin the version in your values.yaml file.
+
+```
+image:
+  tag: <specific-version>
+```
+
+- [ ] Please pin Postgresql, Redis and Clickhouse versions to a specific version. This will prevent any breaking changes from affecting your installation.
+
+When you install, you can check the version installed by describing the pods. 
+
+```
+kubectl describe pod <pod-name>
+```
+
+For example: 
+
+```
+kubectl describe pod my-oneuptime-postgresql-0
+```
+
+Once you have the version, you can pin the version in your values.yaml file.
+
+```
+postgresql:
+  image:
+    tag: <specific-version>
+```
+
+Please do the same for Redis and Clickhouse.
+
+- [ ] Please make sure you have a backups enabled for your PVCs. This is outside the scope of this chart. Please refer to your cloud provider's documentation on how to enable backups for PVCs.
+- [ ] Please make sure you have static passwords for your database passswords (for redis, clickhouse and postgres). You can refer to Bitnami documentation on how to set static passwords for these databases. 
+  
+
+## Releases 
+
+We release frequently, sometimes multiple times a day. It's usually safe to upgrade to the latest version. Any breaking changes will be documented in the release notes. Please make sure you read the release notes before upgrading.
 
 ## Chart Dependencies
 

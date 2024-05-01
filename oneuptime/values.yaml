@@ -25,7 +25,7 @@ metalLb:
     addresses: 
       # - 51.158.55.153/32 # List of IP addresses of all the servers in the cluster.
 
-ingress:
+nginx:
   service: 
     loadBalancerIP: 
     type: LoadBalancer
@@ -183,7 +183,7 @@ openTelemetryExporter:
     statusPage:
     adminDashboard:
     ingestor:
-    ingress:
+    nginx:
 
 containerSecurityContext:
 podSecurityContext:
@@ -211,3 +211,31 @@ cronJobs:
 
 notifications: 
   letsEncryptEmail:
+
+ingress: 
+  enabled: false
+  annotations: 
+  # Please change this to the ingress class name for your cluster. If you use a cloud provider, this is usually the default ingress class name.
+  # If you dont have nginx ingress controller installed, please install it by going to https://kubernetes.github.io/ingress-nginx/deploy/
+  className: nginx # Required. Please change this to the ingress class name for your cluster. If you use a cloud provider, this is usually the default ingress class name.
+  hosts:  # List of hosts for the ingress. Please change this to your hosts
+    # - "oneuptime.com" # Host 1
+    # - "www.oneuptime.com" # Host 2
+  tls:
+    enabled: false
+    hosts: 
+      # - host: "oneuptime.com" # Host 1
+      #   secretName: "oneuptime-tls
+
+
+# extraTemplates -- Array of extra objects to deploy with the release. Strings
+# are evaluated as a template and can use template expansions and functions. All
+# other objects are used as yaml.
+extraTemplates:
+  #- |
+  #    apiVersion: v1
+  #    kind: ConfigMap
+  #    metadata:
+  #      name: my-configmap
+  #    data:
+  #      key: {{ .Values.myCustomValue | quote }}
