@@ -110,7 +110,10 @@ Usage:
   value: {{ $.Values.openTelemetryExporter.endpoint.server }}
 
 - name: LETS_ENCRYPT_NOTIFICATION_EMAIL
-  value: {{ $.Values.notifications.letsEncryptEmail }}
+  value: {{ $.Values.letsEncrypt.email }}
+
+- name: LETS_ENCRYPT_ACCOUNT_KEY
+  value: {{ $.Values.letsEncrypt.accountKey }}
 
 - name: ENCRYPTION_SECRET
   {{- if $.Values.encryptionSecret }}

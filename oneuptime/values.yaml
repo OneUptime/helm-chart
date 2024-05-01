@@ -209,8 +209,11 @@ cronJobs:
     failedWebhookUrl: 
   
 
-notifications: 
-  letsEncryptEmail:
+letsEncrypt: 
+  # Generate a private key via openssl, encode it to base64
+  accountKey: 
+  # Email address to register with letsencrypt for notifications
+  email: 
 
 ingress: 
   enabled: false
