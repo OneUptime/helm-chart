@@ -125,6 +125,7 @@ Usage:
       key: encryption-secret
   {{- end }}
 
+{{- if $.Values.clickhouse.enabled }}
 - name: CLICKHOUSE_USER
   value: {{ $.Values.clickhouse.auth.username }}
 - name: CLICKHOUSE_PASSWORD
@@ -138,7 +139,37 @@ Usage:
   value: {{ printf "%s" $.Values.clickhouse.service.ports.http | squote }}
 - name: CLICKHOUSE_DATABASE
   value: {{ printf "oneuptime" | squote}}
+{{- else if $.Values.clickhouse.existingSecret }}
+- name: CLICKHOUSE_USER
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.clickhouse.existingSecret }}
+        key: CLICKHOUSE_USER
+- name: CLICKHOUSE_PASSWORD
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.clickhouse.existingSecret }}
+        key: CLICKHOUSE_PASSWORD
+- name: CLICKHOUSE_HOST
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.clickhouse.existingSecret }}
+        key: CLICKHOUSE_HOST
+- name: CLICKHOUSE_PORT
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.clickhouse.existingSecret }}
+        key: CLICKHOUSE_PORT
+- name: CLICKHOUSE_DATABASE
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.clickhouse.existingSecret }}
+        key: CLICKHOUSE_DATABASE
+{{- else }}
+{{ fail "You must provide clickhouse.existingSecret if clickhouse.enabled is false" }}
+{{- end }}
 
+{{- if $.Values.redis.enabled }}
 - name: REDIS_HOST
   value: {{ $.Release.Name }}-redis-master.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: REDIS_PORT
@@ -152,7 +183,37 @@ Usage:
   value: {{ printf "0" | squote}}
 - name: REDIS_USERNAME
   value: default
+{{- else if $.Values.redis.existingSecret }}
+- name: REDIS_HOST
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.redis.existingSecret }}
+        key: REDIS_HOST
+- name: REDIS_PORT
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.redis.existingSecret }}
+        key: REDIS_PORT
+- name: REDIS_PASSWORD
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.redis.existingSecret }}
+        key: REDIS_PASSWORD
+- name: REDIS_DB
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.redis.existingSecret }}
+        key: REDIS_DB
+- name: REDIS_USERNAME
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.redis.existingSecret }}
+        key: REDIS_USER
+{{- else }}
+{{ fail "You must provide redis.existingSecret if redis.enabled is false" }}
+{{- end }}
 
+{{- if $.Values.postgresql.enabled }}
 - name: DATABASE_HOST
   value: {{ $.Release.Name }}-postgresql.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: DATABASE_PORT 
@@ -166,6 +227,35 @@ Usage:
         key: postgres-password
 - name: DATABASE_DATABASE 
   value: {{ $.Values.postgresql.auth.database }}
+{{- else if $.Values.postgresql.existingSecret }}
+- name: DATABASE_HOST
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.postgresql.existingSecret }}
+        key: DATABASE_HOST
+- name: DATABASE_PORT 
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.postgresql.existingSecret }}
+        key: DATABASE_PORT
+- name: DATABASE_USERNAME
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.postgresql.existingSecret }}
+        key: DATABASE_USER
+- name: DATABASE_PASSWORD
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.postgresql.existingSecret }}
+        key: DATABASE_PASSWORD
+- name: DATABASE_DATABASE 
+  valueFrom: 
+    secretKeyRef:
+        name: {{ $.Values.postgresql.existingSecret }}
+        key: DATABASE_NAME
+{{- else }}
+{{ fail "You must provide redis.existingSecret if redis.enabled is false" }}
+{{- end }}
 
 - name: BILLING_PRIVATE_KEY
   value: {{ $.Values.billing.privateKey }}

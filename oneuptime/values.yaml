@@ -32,6 +32,8 @@ nginx:
       # - 51.158.55.153 # Please make sure this is the same as the one in metalLb.ipAdddressPool.addresses
 
 postgresql:
+  enabled: true # Set to false if you want use external postgres database.
+  existingSecret: "" # Secret must contain the following keys: DATABASE_HOST, DATABASE_PORT, DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD
   clusterDomain: *global-cluster-domain
   auth:
     username: oneuptime
@@ -50,6 +52,8 @@ postgresql:
       size: 25Gi
 
 clickhouse:
+  enabled: true # Set to false if you want use external clickhouse database.
+  existingSecret: "" # Secret must contain the following keys: CLICKHOUSE_HOST, CLICKHOUSE_PORT, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD, CLICKHOUSE_DATABASE
   clusterDomain: *global-cluster-domain
   service:
     ports:
@@ -68,6 +72,8 @@ clickhouse:
       CREATE DATABASE oneuptime;
 
 redis:
+  enabled: true # Set to false if you want use external redis database.
+  existingSecret: "" # Secret must contain the following keys: REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PASSWORD, REDIS_DB
   clusterDomain: *global-cluster-domain
   architecture: standalone
   auth:
