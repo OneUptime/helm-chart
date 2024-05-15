@@ -97,7 +97,11 @@ Usage:
   {{- else }}
   valueFrom:
     secretKeyRef:
+      {{- if $.Values.existingSecret }}
+      name: {{ $.Values.existingSecret }}
+      {{- else }}
       name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
+      {{- end }}
       key: oneuptime-secret
   {{- end }}
 {{- end }}
@@ -121,7 +125,11 @@ Usage:
   {{- else }}
   valueFrom:
     secretKeyRef:
+      {{- if $.Values.existingSecret }}
+      name: {{ $.Values.existingSecret }}
+      {{- else }}
       name: {{ printf "%s-%s" $.Release.Name "secrets"  }}
+      {{- end }}
       key: encryption-secret
   {{- end }}
 

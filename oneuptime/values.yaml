@@ -9,6 +9,7 @@ httpProtocol: http
 # (Optional): You usually do not need to set this if you're self hosting. If you do set it, set it to a long random value.
 oneuptimeSecret:
 encryptionSecret:
+existingSecret: "" # Secret must contain the following keys: oneuptime-secret, encryption-secret
 
 # (Optional): You usually do not need to set this if you're self hosting.
 openTelemetryCollectorHost:
