@@ -107,6 +107,92 @@ The following table lists the configurable parameters of the OneUptime chart and
 | `oneuptimeIngress.className` | Ingress class name. Change this to your cloud providers ingress class | `nginx` |  |
 | `script.workflowScriptTimeoutInMs` | Timeout for workflow script | `5000` |  |
 
+
+## Using External Databases
+
+### Postgres
+
+If you would like to use an external postgres database, please add these env vars to your values.yaml file. 
+
+```yaml
+
+postgresql:
+  # Set Internal Postgres enabled to false, so we dont install the postgres database in your cluster
+  enabled: false 
+
+# External Postgres Configuration
+# You need to set postgresql.enabled to false if you're using an external postgres database.
+externalPostgres: 
+  host: 
+  port: 
+  username: 
+  password: 
+  database:
+  ssl:
+    enabled: false
+    # If this is enabled, please set either "ca"
+    ca: 
+
+    # Optional
+    cert: 
+    key:
+```
+
+### Redis
+
+If you would like to use an external redis database, please add these env vars to your values.yaml file. 
+
+```yaml
+
+redis:
+  # Set Internal Redis enabled to false, so we dont install the redis database in your cluster
+  enabled: false
+
+
+externalRedis: 
+  host: 
+  port: 
+  password: 
+  database: 
+  tls:
+    enabled: false
+    # If this is enabled, please set "ca" certificate.
+    ca:
+
+    # (optional)
+    cert: 
+    key:
+
+```
+
+### Clickhouse 
+
+If you would like to use an external clickhouse database, please add these env vars to your values.yaml file. 
+
+```yaml
+clickhouse: 
+  # Set Internal Clickhouse enabled to false, so we dont install the clickhouse database in your cluster
+  enabled: false
+
+externalClickhouse:
+  host: 
+  # if you host is https then set this to true
+  isHostHttps: 
+  port: 
+  username: 
+  password: 
+  database:
+  tls:
+    enabled: false
+    # If this is enabled, please set either "ca"
+    ca: 
+
+    # Optional
+    cert: 
+    key:
+```
+
+
 ## If you would like to use a custom domain for your status page, please add these env vars 
 
 

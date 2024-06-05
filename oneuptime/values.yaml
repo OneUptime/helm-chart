@@ -32,7 +32,8 @@ nginx:
     externalIPs:
       # - 51.158.55.153 # Please make sure this is the same as the one in metalLb.ipAdddressPool.addresses
 
-postgresql: 
+postgresql:
+  enabled: true # Set this to false if you're using an external postgresql database.
   clusterDomain: *global-cluster-domain
   auth: 
     username: oneuptime
@@ -50,7 +51,8 @@ postgresql:
     persistence:
       size: 25Gi
 
-clickhouse: 
+clickhouse:
+  enabled: true
   clusterDomain: *global-cluster-domain
   service:
     ports: 
@@ -68,7 +70,8 @@ clickhouse:
     db-init.sql: |
       CREATE DATABASE oneuptime;
 
-redis: 
+redis:
+  enabled: true
   clusterDomain: *global-cluster-domain
   architecture: standalone
   auth:
@@ -263,3 +266,56 @@ extraTemplates:
   #      name: my-configmap
   #    data:
   #      key: {{ .Values.myCustomValue | quote }}
+
+
+# External Postgres Configuration
+# You need to set postgresql.enabled to false if you're using an external postgres database.
+externalPostgres: 
+  host: 
+  port: 
+  username: 
+  password: 
+  database:
+  ssl:
+    enabled: false
+    # If this is enabled, please set either "ca"
+    ca: 
+    # (optional)
+    cert: 
+    key:
+
+## External Redis Configuration
+# You need to set redis.enabled to false if you're using an external redis database.
+
+externalRedis: 
+  host: 
+  port: 
+  username:
+  password: 
+  database: 
+  tls:
+    enabled: false
+    # If this is enabled, please set "ca" certificate.
+    ca:
+    # (optional)
+    cert: 
+    key:
+
+  
+## External Clickhouse Configuration
+# You need to set clickhouse.enabled to false if you're using an external clickhouse database.
+externalClickhouse:
+  host: 
+  ## If the host is https, set this to true. Otherwise, set it to false.
+  isHostHttps: false
+  port: 
+  username: 
+  password: 
+  database: 
+  tls:
+    enabled: false
+    # If this is enabled, please set either "ca"
+    ca: 
+    # (optional)
+    cert: 
+    key:

@@ -126,46 +126,230 @@ Usage:
   {{- end }}
 
 - name: CLICKHOUSE_USER
+  {{- if $.Values.clickhouse.enabled }}
   value: {{ $.Values.clickhouse.auth.username }}
+  {{- else }}
+  value: {{ $.Values.externalClickhouse.username }}
+  {{- end }}
+
+- name: CLICKHOUSE_IS_HOST_HTTPS
+  {{- if $.Values.clickhouse.enabled }}
+  value: {{ false | squote }}
+  {{- else }}
+  value: {{ $.Values.externalClickhouse.isHostHttps | squote }}
+  {{- end }}
 - name: CLICKHOUSE_PASSWORD
+  {{- if $.Values.clickhouse.enabled }}
   valueFrom: 
     secretKeyRef:
         name: {{ printf "%s-%s" $.Release.Name "clickhouse"  }}
         key: admin-password
+  {{- else }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-clickhouse"  }}
+        key: password
+  {{- end }}
 - name: CLICKHOUSE_HOST
+  {{- if $.Values.clickhouse.enabled }}
   value: {{ $.Release.Name }}-clickhouse.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+  {{- else }}
+  value: {{ $.Values.externalClickhouse.host }}
+  {{- end }}
 - name: CLICKHOUSE_PORT
+  {{- if $.Values.clickhouse.enabled }}
   value: {{ printf "%s" $.Values.clickhouse.service.ports.http | squote }}
+  {{- else }}
+  value: {{ $.Values.externalClickhouse.port | quote }}
+  {{- end }}
 - name: CLICKHOUSE_DATABASE
+  {{- if $.Values.clickhouse.enabled }}
   value: {{ printf "oneuptime" | squote}}
+  {{- else }}
+  value: {{ $.Values.externalClickhouse.database }}
+  {{- end }}
+
+
+## REDIS SSL BLOCK 
+{{- if $.Values.clickhouse.enabled }}
+# do nothing here.
+{{- else }}
+{{- if $.Values.externalClickhouse.tls.enabled }}
+
+{{- if $.Values.externalClickhouse.tls.ca }}
+- name: CLICKHOUSE_TLS_CA
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-clickhouse"  }}
+        key: tls-ca
+{{- end }}
+
+{{- if $.Values.externalClickhouse.tls.cert }}
+- name: CLICKHOUSE_TLS_CERT
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-clickhouse"  }}
+        key: tls-cert
+{{- end }}
+
+{{- if $.Values.externalClickhouse.tls.key }}
+- name: CLICKHOUSE_TLS_KEY
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-clickhouse"  }}
+        key: tls-key
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+
+
 
 - name: REDIS_HOST
+  {{- if $.Values.redis.enabled }}
   value: {{ $.Release.Name }}-redis-master.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+  {{- else }}
+  value: {{ $.Values.externalRedis.host }}
+  {{- end }}
 - name: REDIS_PORT
+  {{- if $.Values.redis.enabled }}
   value: {{ printf "%s" $.Values.redis.master.service.ports.redis | quote }}
+  {{- else }}
+  value: {{ $.Values.externalRedis.port | quote }}
+  {{- end }}
 - name: REDIS_PASSWORD
+  {{- if $.Values.redis.enabled }}
   valueFrom: 
     secretKeyRef:
         name: {{ printf "%s-%s" $.Release.Name "redis"  }}
         key: redis-password
+  {{- else }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-redis"  }}
+        key: password
+  {{- end }}
 - name: REDIS_DB
+  {{- if $.Values.redis.enabled }}
   value: {{ printf "0" | squote}}
+  {{- else }}
+  value: {{ $.Values.externalRedis.database | quote }}
+  {{- end }}
 - name: REDIS_USERNAME
+  {{- if $.Values.redis.enabled }}
   value: default
+  {{- else }}
+  value: {{ $.Values.externalRedis.username }}
+  {{- end }}
+
+
+## REDIS SSL BLOCK 
+{{- if $.Values.redis.enabled }}
+# do nothing here.
+{{- else }}
+{{- if $.Values.externalRedis.tls.enabled }}
+
+{{- if $.Values.externalRedis.tls.ca }}
+- name: REDIS_TLS_CA
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-redis"  }}
+        key: tls-ca
+{{- end }}
+
+{{- if $.Values.externalRedis.tls.cert }}
+- name: REDIS_TLS_CERT
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-redis"  }}
+        key: tls-cert
+{{- end }}
+
+{{- if $.Values.externalRedis.tls.key }}
+- name: REDIS_TLS_KEY
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-redis"  }}
+        key: tls-key
+{{- end }}
+{{- end }}
+{{- end }}
+
+# Postgres configuration
 
 - name: DATABASE_HOST
+  {{- if $.Values.postgresql.enabled }}
   value: {{ $.Release.Name }}-postgresql.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+  {{- else }}
+  value: {{ $.Values.externalPostgres.host }}
+  {{- end }}
 - name: DATABASE_PORT 
+  {{- if $.Values.postgresql.enabled }}
   value: {{ printf "%s" $.Values.postgresql.primary.service.ports.postgresql | squote }}
+  {{- else }}
+  value: {{ $.Values.externalPostgres.port | quote }}
+  {{- end }}
 - name: DATABASE_USERNAME
-  value: postgres
+  {{- if $.Values.postgresql.enabled }}
+  value: {{ $.Values.postgresql.auth.username }}
+  {{- else }}
+  value: {{ $.Values.externalPostgres.username }}
+  {{- end }}
 - name: DATABASE_PASSWORD 
+  {{- if $.Values.postgresql.enabled }}
   valueFrom: 
     secretKeyRef:
         name: {{ printf "%s-%s" $.Release.Name "postgresql"  }}
-        key: postgres-password
-- name: DATABASE_DATABASE 
+        key: password
+  {{- else }}
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-postgres"  }}
+        key: password
+  {{- end }}
+- name: DATABASE_NAME 
+  {{- if $.Values.postgresql.enabled }}
   value: {{ $.Values.postgresql.auth.database }}
+  {{- else }}
+  value: {{ $.Values.externalPostgres.database }}
+  {{- end }}
+
+
+## DATABASE SSL BLOCK 
+{{- if $.Values.postgresql.enabled }}
+# do nothing here.
+{{- else }}
+{{- if $.Values.externalPostgres.ssl.enabled }}
+
+{{- if $.Values.externalPostgres.ssl.ca }}
+- name: DATABASE_SSL_CA
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-postgres"  }}
+        key: ssl-ca
+{{- end }}
+
+{{- if $.Values.externalPostgres.ssl.cert }}
+- name: DATABASE_SSL_CERT
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-postgres"  }}
+        key: ssl-cert
+{{- end }}
+
+{{- if $.Values.externalPostgres.ssl.key }}
+- name: DATABASE_SSL_KEY
+  valueFrom: 
+    secretKeyRef:
+        name: {{ printf "%s-%s" $.Release.Name "external-postgres"  }}
+        key: ssl-key
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+## DATABASE SSL ENDS HERE 
 
 - name: BILLING_PRIVATE_KEY
   value: {{ $.Values.billing.privateKey }}
