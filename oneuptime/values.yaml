@@ -217,10 +217,12 @@ nodeSelector:
 logLevel: INFO
 
 # Enable cleanup cron jobs
+# Please do not enable this in producton. This is only for development purposes.
 cronJobs:
   cleanup:
     enabled: false
   e2e:
+    # Please do not enable this in producton. This is only for development purposes.
     enabled: false
     isUserRegistered: false
     registeredUserEmail: 
@@ -275,7 +277,7 @@ externalPostgres:
   port: 
   username: 
   password:
-  # If you're using existing secret for the password, please use this instaead of password. 
+  # If you're using an existing secret for the password, please use this instead of password. 
   existingSecret:
     name: 
     # This is the key in the secret where the password is stored.
@@ -297,7 +299,7 @@ externalRedis:
   port: 
   username:
   password:
-  # If you're using existing secret for the password, please use this instaead of password. 
+  # If you're using an existing secret for the password, please use this instead of password. 
   existingSecret:
     name: 
     # This is the key in the secret where the password is stored.
@@ -321,7 +323,7 @@ externalClickhouse:
   port: 
   username: 
   password:
-  # If you're using existing secret for the password, please use this instaead of password. 
+  # If you're using an existing secret for the password, please use this instead of password. 
   existingSecret:
     name: 
     # This is the key in the secret where the password is stored.
