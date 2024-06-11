@@ -139,8 +139,13 @@ Usage:
 - name: CLICKHOUSE_PASSWORD
   valueFrom: 
     secretKeyRef:
+        {{- if $.Values.clickhouse.auth.existingSecret }}
+        name: {{ $.Values.clickhouse.auth.existingSecret }}
+        key: {{ $.Values.clickhouse.auth.existingSecretKey | default "admin-password" }}
+        {{- else }}
         name: {{ printf "%s-%s" $.Release.Name "clickhouse"  }}
         key: admin-password
+        {{- end }}
 - name: CLICKHOUSE_HOST
   value: {{ $.Release.Name }}-clickhouse.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: CLICKHOUSE_PORT
@@ -256,7 +261,7 @@ Usage:
     secretKeyRef:
         name: {{ $.Values.postgresql.existingSecret }}
         key: DATABASE_PASSWORD
-- name: DATABASE_DATABASE 
+- name: DATABASE_NAME 
   valueFrom: 
     secretKeyRef:
         name: {{ $.Values.postgresql.existingSecret }}
@@ -348,8 +353,8 @@ metadata:
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
-    date: "{{ now | unixEpoch }}"
 spec:
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
@@ -358,7 +363,6 @@ spec:
     metadata:
       labels:
         app: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
-        date: "{{ now | unixEpoch }}"
         appname: oneuptime
     spec:
       {{- if $.Values.podSecurityContext }}

@@ -10,8 +10,8 @@ metadata:
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
-    date: "{{ now | unixEpoch }}"
 spec:
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app: {{ printf "%s-%s" $.Release.Name "nginx"  }}
@@ -20,7 +20,6 @@ spec:
     metadata:
       labels:
         app: {{ printf "%s-%s" $.Release.Name "nginx"  }}
-        date: "{{ now | unixEpoch }}"
         appname: oneuptime
     spec:
       volumes:
