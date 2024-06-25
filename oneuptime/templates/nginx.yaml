@@ -84,6 +84,8 @@ spec:
             {{- include "oneuptime.env.common" . | nindent 12 }}
             {{- include "oneuptime.env.commonServer" . | nindent 12 }}
             {{- include "oneuptime.env.oneuptimeSecret" . | nindent 12 }}
+            - name: ONEUPTIME_HTTP_PORT
+              value: {{ $.Values.port.nginxHttp | quote }}
             - name: OPENTELEMETRY_EXPORTER_OTLP_HEADERS
               value: {{ $.Values.openTelemetryExporter.headers.nginx }}
             - name: PORT
@@ -91,10 +93,11 @@ spec:
           ports:
             - containerPort: 7849
               protocol: TCP
-              name: http
+              name: oneuptime-http
+              # If you are connecting Status Pages to custom domains, then this will be the port where the status page will be hosted on.
             - containerPort: 7850
               protocol: TCP
-              name: https
+              name: statuspage-ssl
       restartPolicy: {{ $.Values.image.restartPolicy }}
 
 ---
@@ -126,10 +129,10 @@ spec:
   ports:
     - port: {{ $.Values.port.nginxHttp }}
       targetPort: 7849
-      name: http
-    - port: {{ $.Values.port.nginxHttps }}
+      name: oneuptime-http
+    - port: {{ $.Values.port.statusPageHttpsPort }}
       targetPort: 7850
-      name: https
+      name: statuspage-ssl
   selector:
       app: {{ printf "%s-%s" $.Release.Name "nginx"  }}
   {{- if and ($.Values.nginx.service.type) (eq $.Values.oneuptimeIngress.enabled false) }}
