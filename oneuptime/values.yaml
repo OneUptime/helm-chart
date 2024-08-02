@@ -148,6 +148,11 @@ internalSmtp:
 incidents:
   disableAutomaticCreation: false
 
+# If you would like to attach status page to custom domains use this setting.
+# For example, lets say you would like the status page to be hosted on status.yourcompany.com, then 
+# 1. Create a A record in your DNS provider with the name "oneuptime.yourcompany.com" and value to Public IP of the server oneuptime is deployed on.
+# 2. Set the statusPage.cnameRecord to "oneuptime.yourcompany.com"
+# 3. Create CNAME record in your DNS provider with the name "status.yourcompany.com" and value "oneuptime.yourcompany.com"
 statusPage: 
   cnameRecord: 
 
@@ -161,9 +166,6 @@ probes:
     replicaCount: 1
     syntheticMonitorScriptTimeoutInMs: 60000
     customCodeMonitorScriptTimeoutInMs: 60000
-    # Feel free to leave this blank if you're not integrating this with OpenTelemetry Backend.
-    openTelemetryExporter: 
-      headers:
   # two: 
   #   name: "Probe 2"
   #   description: "Probe 2"
@@ -173,8 +175,6 @@ probes:
   #   replicaCount: 1
   #   syntheticMonitorScriptTimeoutInMs: 60000
   #   customCodeMonitorScriptTimeoutInMs: 60000
-  #   openTelemetryExporter:
-  #     headers:
 
 port: 
   app: 3002
@@ -200,17 +200,9 @@ testServer:
 
 
 openTelemetryExporter:
-  endpoint: 
-    server:
-    client:
-  headers: 
-    app: 
-    dashboard:
-    accounts:
-    statusPage:
-    adminDashboard:
-    ingestor:
-    nginx:
+  endpoint:
+  # This can be for example: x-oneuptime-token=<YOUR_ONEUPTIME_TELEMETRY_INGEST_TOKEN>
+  headers:
 
 containerSecurityContext:
 podSecurityContext:
