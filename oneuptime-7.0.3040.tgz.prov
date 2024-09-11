@@ -1,0 +1,50 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/license: MIT
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+    url: https://keybase.io/oneuptime/pgp_keys.asc
+apiVersion: v2
+appVersion: 7.0.3040
+dependencies:
+- - condition: postgresql.enabled
+  name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.0.0
+- - condition: redis.enabled
+  name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.19.1
+- - condition: clickhouse.enabled
+  name: clickhouse
+  repository: https://charts.bitnami.com/bitnami
+  version: 5.1.0
+description: The Complete Open-Source Observability Platform
+icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/App/FeatureSet/Home/Static/img/OneUptimePNG/1.png
+name: oneuptime
+type: application
+version: 7.0.3040
+
+...
+files:
+  oneuptime-7.0.3040.tgz: sha256:6550c75ec9ca5f5e80f1786275e20fba13c73b387ce6a869b28c799a6cf0aee3
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJm4daqCRCdh+SUrAFmlwAAsg4QAH6dlpGNCyOlrhw7LEpIR3c2
+S0X6jzxxHL+saQR2n5g4nS6zMIHAcbM4x/Q2ApPBY0vVxfgGIpmkSTSMCS7ry/X+
+8K9a9zUJn7s5FimYgAAqL1mxsaRxKbDcd1zQaDdlopN4uP0cWNvwjLk4K3WtqrCt
+6g7bIhSDJXgSqxIlB9tH7kHo+L57IY+VUk1QdwRExmb8c3BuTH/Tz2lhvhTfivqN
+Obn1NuSjZ++bu+/r87B30LBIThEbKIfisBp2VmwVvCjQ+qZ8RJOc4ZFDQUHhhuJ9
+ZbThXYFvOmrZubYW8ceoe8NL2m3FaINLTQ72tjniUoA4vY/eWKXWZU/HusEyLCI1
+WXdOK6xZa3lZn/1TC2ATKpA/Z0AqAeeeF8iONdbBynzySTOC2TqGSEkuJ5McwFsM
+LKdf58lBWXj6LFSlcslUx6BKEgV0dQNDHtRuOgTi/D+vPHemghbiFMxvxYeqNz10
+f/HmhOTRGRPFagnafcVA/SvmG12tLJfm8zrPkACkQ+mnIUK6QCzujvKH1i95Ylkk
+3fFBWV6khpbxV+S4c2f2XsVfAYqpkd69waNkJuGgF+M6m7pZnDdkmnAASQpCeLLZ
+yByGssXMscJS7jtsNCtfifg84WBuEDfg1boRVthaZr+dst5unT8UO9S54u2zHjnr
+BWb8F9aHMeOVHZQAqZSZ
+=btan
+-----END PGP SIGNATURE-----
