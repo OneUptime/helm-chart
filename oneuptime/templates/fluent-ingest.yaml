@@ -1,11 +1,12 @@
-# OneUptime app Deployment
+# OneUptime fluent-ingest Deployment
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-%s" $.Release.Name "app"  }}
+  name: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
   namespace: {{ $.Release.Namespace }}
   labels:
-    app: {{ printf "%s-%s" $.Release.Name "app"  }}
+    app: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
@@ -13,21 +14,29 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ printf "%s-%s" $.Release.Name "app"  }}
+      app: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
+  {{- if $.Values.deployment.fluentIngest.replicaCount }}
+  replicas: {{ $.Values.deployment.fluentIngest.replicaCount }}
+  {{- else }}
   replicas: {{ $.Values.deployment.replicaCount }}
+  {{- end }}
   template:
     metadata:
       labels:
-        app: {{ printf "%s-%s" $.Release.Name "app"  }}
+        app: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
         date: "{{ now | unixEpoch }}"
         appname: oneuptime
     spec:
+      volumes:
+        - name: greenlockrc
+          emptyDir:
+            sizeLimit: "1Gi"
+      {{- if $.Values.podSecurityContext }}
+      securityContext: {{- $.Values.podSecurityContext | toYaml | nindent 8 }}
+      {{- end }}
       {{- if $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml $.Values.imagePullSecrets | nindent 8 }}
-      {{- end }}
-      {{- if $.Values.podSecurityContext }}
-      securityContext: {{- $.Values.podSecurityContext | toYaml | nindent 8 }}
       {{- end }}
       {{- if $.Values.affinity }}
       affinity: {{- $.Values.affinity | toYaml | nindent 8 }}
@@ -39,15 +48,14 @@ spec:
       nodeSelector: {{- $.Values.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
       containers:
-        - image: {{ printf "%s/%s/%s:%s" $.Values.image.registry $.Values.image.repository "app" $.Values.image.tag }}
-          name: {{ printf "%s-%s" $.Release.Name "app"  }}
-          # Liveness probe
+        - image: {{ printf "%s/%s/%s:%s" $.Values.image.registry $.Values.image.repository "fluent-ingest" $.Values.image.tag }}
+          name: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
           {{- if $.Values.startupProbe.enabled }}
           # Startup probe
           startupProbe:
             httpGet:
               path: /status/live
-              port: {{ $.Values.port.app }}
+              port: {{ $.Values.port.fluentIngest }}
             periodSeconds: {{ $.Values.startupProbe.periodSeconds }}
             failureThreshold: {{ $.Values.startupProbe.failureThreshold }}
           {{- end }}
@@ -56,7 +64,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /status/live
-              port: {{ $.Values.port.app }}
+              port: {{ $.Values.port.fluentIngest }}
             periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ $.Values.livenessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ $.Values.livenessProbe.initialDelaySeconds }}
@@ -66,7 +74,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /status/ready
-              port: {{ $.Values.port.app }}
+              port: {{ $.Values.port.fluentIngest }}
             periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
             initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ $.Values.readinessProbe.timeoutSeconds }}
@@ -82,39 +90,22 @@ spec:
             - name: OPENTELEMETRY_EXPORTER_OTLP_HEADERS
               value: {{ $.Values.openTelemetryExporter.headers }}
             - name: PORT
-              value: {{ $.Values.port.app | quote }}
-            - name: SMS_HIGH_RISK_COST_IN_CENTS
-              value: {{ $.Values.billing.smsHighRiskValueInCents | quote }}
-            - name: CALL_HIGH_RISK_COST_IN_CENTS_PER_MINUTE
-              value: {{ $.Values.billing.callHighRiskValueInCentsPerMinute | quote }}
-            - name: SMS_DEFAULT_COST_IN_CENTS
-              value: {{ $.Values.billing.smsDefaultValueInCents | quote }}
-            - name: CALL_DEFAULT_COST_IN_CENTS_PER_MINUTE
-              value: {{ $.Values.billing.callDefaultValueInCentsPerMinute | quote }}
-            - name: INTERNAL_SMTP_HOST
-              value: {{ printf "%s-haraka.%s.svc.%s" $.Release.Name $.Release.Namespace $.Values.global.clusterDomain | quote }}
-            - name: INTERNAL_SMTP_FROM_NAME
-              value: {{ $.Values.internalSmtp.name | quote }}
-            - name: INTERNAL_SMTP_EMAIL
-              value: {{ $.Values.internalSmtp.email | quote }}
-            - name: INTERNAL_SMTP_PASSWORD
-              value: "internal_smtp_password"  
-        
+              value: {{ $.Values.port.fluentIngest | quote }} 
           ports:
-            - containerPort: {{ $.Values.port.app }}
+            - containerPort: {{ $.Values.port.fluentIngest }}
               protocol: TCP
               name: http
       restartPolicy: {{ $.Values.image.restartPolicy }}
 
 ---
 
-# OneUptime app Service
-{{- $appPorts := dict "port" $.Values.port.app -}}
-{{- $appServiceArgs := dict "ServiceName" "app" "Ports" $appPorts "Release" $.Release "Values" $.Values -}}
-{{- include "oneuptime.service" $appServiceArgs }}
+# OneUptime fluent-ingest Service
+{{- $fluentIngestPorts := dict "port" $.Values.port.fluentIngest -}}
+{{- $fluentIngestServiceArgs := dict "ServiceName" "fluent-ingest" "Ports" $fluentIngestPorts "Release" $.Release "Values" $.Values -}}
+{{- include "oneuptime.service" $fluentIngestServiceArgs }}
 ---
 
-# OneUptime app autoscaler
-{{- $appAutoScalerArgs := dict "ServiceName" "app" "Release" $.Release "Values" $.Values -}}
-{{- include "oneuptime.autoscaler" $appAutoScalerArgs }}
+# OneUptime fluent-ingest autoscaler
+{{- $fluentIngestAutoScalerArgs := dict "ServiceName" "fluent-ingest" "Release" $.Release "Values" $.Values -}}
+{{- include "oneuptime.autoscaler" $fluentIngestAutoScalerArgs }}
 ---

@@ -30,7 +30,13 @@ fluentdHost:
 deployment:
   # Default replica count for all deployments
   replicaCount: 1
-  ingestor:
+  probeIngest:
+    replicaCount:
+  openTelemetryIngest: 
+    replicaCount:
+  fluentIngest:
+    replicaCount:
+  incomingRequestIngest:
     replicaCount:
 
 metalLb:
@@ -203,7 +209,10 @@ probes:
 
 port:
   app: 3002
-  ingestor: 3400
+  probeIngest: 3400
+  openTelemetryIngest: 3403
+  fluentIngest: 3401
+  incomingRequestIngest: 3402
   testServer: 3800
   accounts: 3003
   statusPage: 3105
@@ -214,7 +223,6 @@ port:
   # If you are connecting Status Pages to custom domains, then this will be the port where the status page will be hosted on.
   statusPageHttpsPort: 443
   haraka: 2525
-  probe: 3500
   otelCollectorGrpc: 4317
   otelCollectorHttp: 4318
   isolatedVM: 4572
@@ -240,7 +248,8 @@ tolerations:
 nodeSelector:
 
 
-# This can be one of the following: DEBUG, INFO, WARN, ERROR
+# This can be one of the following: DEBUG, INFO, WARN, ERROR, OFF
+# Please do not set this to DEBUG in production. This is only for development / debugging purposes.
 logLevel: INFO
 
 # Enable cleanup cron jobs
@@ -376,5 +385,20 @@ notifications:
     onCreateUser:
 
 
-enableLivenessProbe: true
-enableReadinessProbe: true
+
+startupProbe: # Startup probe configuration
+  enabled: true
+  periodSeconds: 10
+  failureThreshold: 18
+
+livenessProbe: # Liveness probe configuration
+  enabled: true
+  periodSeconds: 10
+  timeoutSeconds: 5
+  initialDelaySeconds: 10
+
+readinessProbe: # Readiness probe configuration
+  enabled: true
+  periodSeconds: 10
+  initialDelaySeconds: 10
+  timeoutSeconds: 5

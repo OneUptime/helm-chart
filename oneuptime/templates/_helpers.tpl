@@ -58,8 +58,16 @@ Usage:
   value: {{ $.Release.Name }}-home.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_APP_HOSTNAME
   value: {{ $.Release.Name }}-app.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
-- name: SERVER_INGESTOR_HOSTNAME
-  value: {{ $.Release.Name }}-ingestor.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+- name: SERVER_PROBE_INGEST_HOSTNAME
+  value: {{ $.Release.Name }}-probe-ingest.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+- name: OPEN_TELEMETRY_INGEST_HOSTNAME
+  value: {{ $.Release.Name }}-open-telemetry-ingest.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+- name: SERVER_INCOMING_REQUEST_INGEST_HOSTNAME
+  value: {{ $.Release.Name }}-incoming-request-ingest.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+- name: SERVER_FLUENT_INGEST_HOSTNAME
+  value: {{ $.Release.Name }}-fluent-ingest.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
+- name: SERVER_OPEN_TELEMETRY_INGEST_HOSTNAME
+  value: {{ $.Release.Name }}-open-telemetry-ingest.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_TEST_SERVER_HOSTNAME
   value: {{ $.Release.Name }}-test-server.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_OTEL_COLLECTOR_HOSTNAME
@@ -75,10 +83,14 @@ Usage:
 
 - name: APP_PORT
   value: {{ $.Values.port.app | squote }}
-- name: INGESTOR_PORT
-  value: {{ $.Values.port.ingestor | squote }}
-- name: PROBE_PORT
-  value: {{ $.Values.port.probe | squote }}
+- name: PROBE_INGEST_PORT
+  value: {{ $.Values.port.probeIngest | squote }}
+- name: OPEN_TELEMETRY_INGEST_PORT
+  value: {{ $.Values.port.openTelemetryIngest | squote }}
+- name: INCOMING_REQUEST_INGEST_PORT
+  value: {{ $.Values.port.incomingRequestIngest | squote }}
+- name: FLUENT_INGEST_PORT
+  value: {{ $.Values.port.fluentIngest | squote }}
 - name: TEST_SERVER_PORT
   value: {{ $.Values.port.testServer | squote }}
 - name: ACCOUNTS_PORT
