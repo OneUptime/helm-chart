@@ -112,7 +112,7 @@ spec:
 ---
 
 # OneUptime open-telemetry-ingest autoscaler
-{{- if not $.Values.openTelemetryIngest.disableAutoscaler }}
+{{- if and (not $.Values.openTelemetryIngest.disableAutoscaler) (not (and $.Values.keda.enabled $.Values.openTelemetryIngest.keda.enabled)) }}
 {{- $openTelemetryIngestAutoScalerArgs := dict "ServiceName" "open-telemetry-ingest" "Release" $.Release "Values" $.Values -}}
 {{- include "oneuptime.autoscaler" $openTelemetryIngestAutoScalerArgs }}
 {{- end }}
