@@ -559,10 +559,8 @@ spec:
   selector:
     matchLabels:
       app: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
-  {{- $serviceName := $.ServiceName }}
-  {{- $serviceConfig := index $.Values $serviceName }}
-  {{- if and $serviceConfig $serviceConfig.replicaCount }}
-  replicas: {{ $serviceConfig.replicaCount }}
+  {{- if $.ReplicaCount }}
+  replicas: {{ $.ReplicaCount }}
   {{- else }}
   {{- if or (not $.Values.autoscaling.enabled) ($.DisableAutoscaler) }}
   replicas: {{ $.Values.deployment.replicaCount }}
@@ -728,13 +726,14 @@ spec:
   cooldownPeriod: {{ .MetricsConfig.cooldownPeriod }}
   triggers:
     {{- range .MetricsConfig.triggers }}
-    - type: prometheus
+    - type: metrics-api
       metadata:
-        serverAddress: http://{{ printf "%s-%s" $.Release.Name $.ServiceName }}:{{ .port }}/metrics
-        query: {{ .query }}
-        threshold: {{ .threshold | quote }}
-      authenticationRef:
-        name: {{ printf "%s-%s-trigger-auth" $.Release.Name $.ServiceName }}
+        targetValue: {{ .threshold | quote }}
+        url: http://{{ printf "%s-%s" $.Release.Name $.ServiceName }}:{{ .port }}/metrics/queue-size
+        valueLocation: 'queueSize'
+        method: 'GET'
+      # authenticationRef:
+      #   name: {{ printf "%s-%s-trigger-auth" $.Release.Name $.ServiceName }}
     {{- end }}
 ---
 apiVersion: keda.sh/v1alpha1
@@ -749,14 +748,14 @@ metadata:
     appname: oneuptime
 spec:
   secretTargetRef:
-    {{- if .Values.oneuptimeSecret }}
-    - parameter: X-Cluster-Key
-      name: {{ printf "%s-%s" .Release.Name "secrets" }}
-      key: oneuptime-secret
-    {{- else if .Values.externalSecrets.oneuptimeSecret.existingSecret.name }}
-    - parameter: X-Cluster-Key
+    {{- if .Values.externalSecrets.oneuptimeSecret.existingSecret.name }}
+    - parameter: clusterkey
       name: {{ .Values.externalSecrets.oneuptimeSecret.existingSecret.name }}
       key: {{ .Values.externalSecrets.oneuptimeSecret.existingSecret.passwordKey }}
+    {{- else }}
+    - parameter: clusterkey
+      name: {{ printf "%s-%s" .Release.Name "secrets" }}
+      key: oneuptime-secret
     {{- end }}
 {{- end }}
 {{- end }}
