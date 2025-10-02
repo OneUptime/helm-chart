@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
+    {{- if $.Values.deployment.includeTimestampLabel }}
     date: "{{ now | unixEpoch }}"
+    {{- end }}
 spec:
   selector:
     matchLabels:
@@ -22,19 +24,26 @@ spec:
   replicas: {{ $.Values.deployment.replicaCount }}
   {{- end }}
   {{- end }}
+  strategy: {{- toYaml $.Values.deployment.updateStrategy | nindent 4 }}
   template:
     metadata:
       labels:
         app: {{ printf "%s-%s" $.Release.Name "fluent-ingest"  }}
+        {{- if $.Values.deployment.includeTimestampLabel }}
         date: "{{ now | unixEpoch }}"
+        {{- end }}
         appname: oneuptime
     spec:
       volumes:
         - name: greenlockrc
           emptyDir:
             sizeLimit: "1Gi"
-      {{- if $.Values.podSecurityContext }}
-      securityContext: {{- $.Values.podSecurityContext | toYaml | nindent 8 }}
+      {{- if $.Values.fluentIngest.podSecurityContext }}
+      securityContext:
+        {{- toYaml $.Values.fluentIngest.podSecurityContext | nindent 8 }}
+      {{- else if $.Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       {{- end }}
       {{- if $.Values.imagePullSecrets }}
       imagePullSecrets:
@@ -46,8 +55,12 @@ spec:
       {{- if $.Values.tolerations }}
       tolerations: {{- $.Values.tolerations | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.nodeSelector }}
-      nodeSelector: {{- $.Values.nodeSelector | toYaml | nindent 8 }}
+      {{- if $.Values.fluentIngest.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.fluentIngest.nodeSelector | nindent 8 }}
+      {{- else if $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.nodeSelector | nindent 8 }}
       {{- end }}
       containers:
         - image: {{ printf "%s/%s/%s:%s" $.Values.image.registry $.Values.image.repository "fluent-ingest" $.Values.image.tag }}
@@ -81,8 +94,12 @@ spec:
             initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ $.Values.readinessProbe.timeoutSeconds }}
           {{- end }}
-          {{- if $.Values.containerSecurityContext }}
-          securityContext: {{- $.Values.containerSecurityContext | toYaml | nindent 12 }}
+          {{- if $.Values.fluentIngest.containerSecurityContext }}
+          securityContext:
+            {{- toYaml $.Values.fluentIngest.containerSecurityContext | nindent 12 }}
+          {{- else if $.Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml $.Values.containerSecurityContext | nindent 12 }}
           {{- end }}
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:

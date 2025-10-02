@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
+    {{- if $.Values.deployment.includeTimestampLabel }}
     date: "{{ now | unixEpoch }}"
+    {{- end }}
 spec:
   selector:
     matchLabels:
@@ -22,11 +24,14 @@ spec:
   replicas: {{ $.Values.deployment.replicaCount }}
   {{- end }}
   {{- end }}
+  strategy: {{- toYaml $.Values.deployment.updateStrategy | nindent 4 }}
   template:
     metadata:
       labels:
         app: {{ printf "%s-%s" $.Release.Name "isolated-vm"  }}
+        {{- if $.Values.deployment.includeTimestampLabel }}
         date: "{{ now | unixEpoch }}"
+        {{- end }}
         appname: oneuptime
     spec:
       {{- if $.Values.podSecurityContext }}
@@ -42,14 +47,29 @@ spec:
       {{- if $.Values.tolerations }}
       tolerations: {{- $.Values.tolerations | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.nodeSelector }}
-      nodeSelector: {{- $.Values.nodeSelector | toYaml | nindent 8 }}
+      {{- if $.Values.isolatedVM.podSecurityContext }}
+      securityContext:
+        {{- toYaml $.Values.isolatedVM.podSecurityContext | nindent 8 }}
+      {{- else if $.Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.isolatedVM.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.isolatedVM.nodeSelector | nindent 8 }}
+      {{- else if $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.nodeSelector | nindent 8 }}
       {{- end }}
       containers:
         - image: {{ printf "%s/%s/%s:%s" $.Values.image.registry $.Values.image.repository "isolated-vm" $.Values.image.tag }}
           name: {{ printf "%s-%s" $.Release.Name "isolated-vm"  }}
-          {{- if $.Values.containerSecurityContext }}
-          securityContext: {{- $.Values.containerSecurityContext | toYaml | nindent 12 }}
+          {{- if $.Values.isolatedVM.containerSecurityContext }}
+          securityContext:
+            {{- toYaml $.Values.isolatedVM.containerSecurityContext | nindent 12 }}
+          {{- else if $.Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml $.Values.containerSecurityContext | nindent 12 }}
           {{- end }}
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:

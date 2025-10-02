@@ -12,6 +12,10 @@ Usage:
 {{- end -}}
 
 {{- define "oneuptime.env.common" }}
+
+- name: MICROSOFT_TEAMS_APP_CLIENT_ID
+  value: {{ $.Values.microsoftTeamsApp.clientId }}
+
 {{- if $.Values.openTelemetryExporter.endpoint }}
 - name: OPENTELEMETRY_EXPORTER_OTLP_ENDPOINT
   value: {{ $.Values.openTelemetryExporter.endpoint }}
@@ -170,6 +174,10 @@ Usage:
 
 - name: SLACK_APP_SIGNING_SECRET
   value: {{ $.Values.slackApp.signingSecret }}
+
+- name: MICROSOFT_TEAMS_APP_CLIENT_SECRET
+  value: {{ $.Values.microsoftTeamsApp.clientSecret }}
+
 
 - name: NOTIFICATION_SLACK_WEBHOOK_ON_CREATED_USER
   value: {{ $.Values.notifications.webhooks.slack.onCreateUser }}
@@ -554,7 +562,9 @@ metadata:
     app.kubernetes.io/part-of: oneuptime
     app.kubernetes.io/managed-by: Helm
     appname: oneuptime
+    {{- if $.Values.deployment.includeTimestampLabel }}
     date: "{{ now | unixEpoch }}"
+    {{- end }}
 spec:
   selector:
     matchLabels:
@@ -565,20 +575,27 @@ spec:
   {{- if or (not $.Values.autoscaling.enabled) ($.DisableAutoscaler) }}
   replicas: {{ $.Values.deployment.replicaCount }}
   {{- end }}
+  strategy: {{- toYaml $.Values.deployment.updateStrategy | nindent 4 }}
   {{- end }}
   template:
     metadata:
       labels:
         app: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
+        {{- if $.Values.deployment.includeTimestampLabel }}
         date: "{{ now | unixEpoch }}"
+        {{- end }}
         appname: oneuptime
     spec:
       {{- if $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml $.Values.imagePullSecrets | nindent 8 }}
       {{- end }}
-      {{- if $.Values.podSecurityContext }}
-      securityContext: {{- $.Values.podSecurityContext | toYaml | nindent 8 }}
+      {{- if $.PodSecurityContext }}
+      securityContext:
+        {{- toYaml $.PodSecurityContext | nindent 8 }}
+      {{- else if $.Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       {{- end }}
       {{- if $.Values.affinity }}
       affinity: {{- $.Values.affinity | toYaml | nindent 8 }}
@@ -586,8 +603,12 @@ spec:
       {{- if $.Values.tolerations }}
       tolerations: {{- $.Values.tolerations | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.nodeSelector }}
-      nodeSelector: {{- $.Values.nodeSelector | toYaml | nindent 8 }}
+      {{- if $.NodeSelector }}
+      nodeSelector:
+        {{- toYaml $.NodeSelector | nindent 8 }}
+      {{- else if $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if $.Volumes }}
       volumes:
@@ -604,8 +625,12 @@ spec:
         - image: {{ printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repository $.ServiceName .Values.image.tag }}
         {{- end}}
           name: {{ printf "%s-%s" $.Release.Name $.ServiceName  }}
-          {{- if $.Values.containerSecurityContext }}
-          securityContext: {{- $.Values.containerSecurityContext | toYaml | nindent 12 }}
+          {{- if $.ContainerSecurityContext }}
+          securityContext:
+            {{- toYaml $.ContainerSecurityContext | nindent 12 }}
+          {{- else if $.Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml $.Values.containerSecurityContext | nindent 12 }}
           {{- end }}
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
