@@ -1,0 +1,46 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/license: MIT
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+    url: https://keybase.io/oneuptime/pgp_keys.asc
+apiVersion: v2
+appVersion: 8.0.5479
+dependencies:
+- - condition: keda.enabled
+  name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.17.2
+- - condition: cert-manager.enabled
+  name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.18.2
+description: The Complete Open-Source Observability Platform
+icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/Static/img/OneUptimePNG/1.png
+name: oneuptime
+type: application
+version: 8.0.5479
+
+...
+files:
+  oneuptime-8.0.5479.tgz: sha256:0f0bce9d1b5f16519385b2e142a29e87b2d3f02af82644602b827668dcac49d6
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJpARmVCRCdh+SUrAFmlwAAle0QAA/LQinvGOMziy3Mqg+hBaRC
+s8whMmK3ycFFWs+GBOi50tKd0V8leBDOV7d7VlEGK2nGOJYQf3tF/zftgcnT0I/W
+Es1zYwGGIBYlHGSkCth8CXCgoguQjbJujExjOgkyqa1day3MFlWffpgCC4uGm8VU
+cG6q3firvQrNdSCM+jvt19KzxdAqJGk3zgeE97VEQnhhKe/mnoNf4tlEEQ10VijM
+86IMDXfbvn0uU8gm5569R5iLELFkJMJgS31PTuGjtk6pgkafjJfk2iVe/zwJnOg0
+4OrxTIsnomnP1Fx70tRom16SVBVq7X8fubLk47BnnMr4vncB9NVNKwzNARn9nRKi
+UJVyzfjB3YLSWn3iveALHL52n0vBkZxSD/Z9r7ylVrcVkZd+zU9pvAsXPQn9gwCo
+gQynYoeo44M5onIHFYwrSiCGoqDLiWs6WkwjFOA1XwirdmqwttrqCStFF0MG0sL4
+nZuQE+gMS134KmAN7XCQ1ALAO6ZZqTWk4F7s4dWD3T+tGFl9h/wGYHEfmi7kRnbz
+9atwj5FO6CUGQiHmh8f/cxlnT/1uyJ9U7fHo9EIP2kk45Bj4AnngEGJw+h0Ye8T3
+c4KCuadZjU7T7/XpaT2910zB/po/mrI8v8N1ayNMwKCmh6CfBWQiKftSf3zCn6Aq
+nHLONUifAi2TWPcjTTiE
+=EyQs
+-----END PGP SIGNATURE-----
