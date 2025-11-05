@@ -31,6 +31,10 @@ Usage:
 
 {{- define "oneuptime.env.common" }}
 {{- $isEnterpriseEdition := eq (default "community-edition" $.Values.image.type) "enterprise-edition" }}
+{{- $provisionSSL := false -}}
+{{- if kindIs "map" $.Values.ssl }}
+  {{- $provisionSSL = default false $.Values.ssl.provision -}}
+{{- end }}
 
 - name: IS_ENTERPRISE_EDITION
   value: {{ (ternary "true" "false" $isEnterpriseEdition) | squote }}
@@ -49,6 +53,8 @@ Usage:
   value: {{ $.Values.slackApp.clientId | quote }}
 - name: HOST
   value: {{ $.Values.host }}
+- name: PROVISION_SSL
+  value: {{ ternary "true" "false" $provisionSSL | quote }}
 - name: STATUS_PAGE_CNAME_RECORD
   value: {{ $.Values.statusPage.cnameRecord }}
 - name: ALLOWED_ACTIVE_MONITOR_COUNT_IN_FREE_PLAN
@@ -159,11 +165,6 @@ Usage:
 {{- end }}
 
 
-{{- define "oneuptime.env.commonUi" }}
-- name: IS_SERVER
-  value: {{ printf "false" | squote }}
-{{- end }}
-
 {{- define "oneuptime.env.oneuptimeSecret" }}
 - name: ONEUPTIME_SECRET
   {{- if $.Values.oneuptimeSecret }}
@@ -183,9 +184,7 @@ Usage:
   {{- end }}
 {{- end }}
 
-{{- define "oneuptime.env.commonServer" }}
-- name: IS_SERVER
-  value: {{ printf "true" | squote }}
+{{- define "oneuptime.env.runtime" }}
 
 - name: VAPID_PRIVATE_KEY
   value: {{ $.Values.vapid.privateKey }}
@@ -319,7 +318,6 @@ Usage:
 {{- end }}
 {{- end }}
 {{- end }}
-
 
 
 
@@ -517,6 +515,7 @@ Usage:
 - name: AVERAGE_EXCEPTION_ROW_SIZE_IN_BYTES
   value: {{ $.Values.billing.telemetry.averageExceptionRowSizeInBytes | quote }}
 
+{{- include "oneuptime.env.oneuptimeSecret" . }}
 {{- end }}
 
 {{- define "oneuptime.env.pod" }}
@@ -667,13 +666,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
             {{- include "oneuptime.env.common" . | nindent 12 }}
-            {{- if $.IsUI }}
-            {{- include "oneuptime.env.commonUi" . | nindent 12 }}
-            {{- end }}
-            {{- if $.IsServer  }}
-            {{- include "oneuptime.env.commonServer" . | nindent 12 }}
-            {{- include "oneuptime.env.oneuptimeSecret" . | nindent 12 }}
-            {{- end }}
+            {{- include "oneuptime.env.runtime" . | nindent 12 }}
             {{- if $.Env }}
             {{- range $key, $val := $.Env }}
             - name: {{ $key }}

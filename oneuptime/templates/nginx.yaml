@@ -38,6 +38,9 @@ spec:
         - name: status-page-certs
           emptyDir:
             sizeLimit: "1Gi"
+        - name: server-certs
+          emptyDir:
+            sizeLimit: "1Gi"
         - name: cache
           emptyDir:
             sizeLimit: "1Gi"
@@ -106,6 +109,8 @@ spec:
           volumeMounts:
             - name: status-page-certs
               mountPath: /etc/nginx/certs/StatusPageCerts
+            - name: server-certs
+              mountPath: /etc/nginx/certs/ServerCerts
             - name: cache
               mountPath: /var/cache/nginx
             - name: conf
@@ -122,8 +127,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
             {{- include "oneuptime.env.common" . | nindent 12 }}
-            {{- include "oneuptime.env.commonServer" . | nindent 12 }}
-            {{- include "oneuptime.env.oneuptimeSecret" . | nindent 12 }}
+            {{- include "oneuptime.env.runtime" (dict "Values" $.Values "Release" $.Release) | nindent 12 }}
             - name: NGINX_LISTEN_ADDRESS
               value: {{ $.Values.nginx.listenAddress | quote }}
             - name: NGINX_LISTEN_OPTIONS
