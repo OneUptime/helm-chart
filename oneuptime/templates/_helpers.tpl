@@ -113,8 +113,6 @@ Usage:
   value: {{ $.Release.Name }}-workflow.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_WORKER_HOSTNAME
   value: {{ $.Release.Name }}-worker.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
-- name: SERVER_API_REFERENCE_HOSTNAME
-  value: {{ $.Release.Name }}-api-reference.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_HOME_HOSTNAME
   value: {{ $.Release.Name }}-home.{{ $.Release.Namespace }}.svc.{{ $.Values.global.clusterDomain }}
 - name: SERVER_APP_HOSTNAME
@@ -170,8 +168,6 @@ Usage:
   value: {{ $.Values.dashboard.ports.http | squote }}
 - name: ADMIN_DASHBOARD_PORT
   value: {{ $.Values.adminDashboard.ports.http | squote }}
-- name: API_REFERENCE_PORT
-  value: {{ $.Values.apiReference.ports.http | squote }}
 - name: DOCS_PORT
   value: {{ $.Values.docs.ports.http | squote }}
 - name: MCP_PORT
