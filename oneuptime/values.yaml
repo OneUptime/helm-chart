@@ -35,6 +35,12 @@ oneuptimeSecret:
 registerProbeKey:
 encryptionSecret:
 
+# Comma-separated list of egress IP addresses that probes use for monitoring checks.
+# Customers can use this to whitelist probe traffic in their firewalls.
+# This is returned as a JSON array via the /ip-whitelist API endpoint.
+# Example: "203.0.113.1,203.0.113.2,198.51.100.10"
+ipWhitelist:
+
 # External Secrets
 # You need to leave blank oneuptimeSecret and encryptionSecret to use this section
 externalSecrets:
@@ -48,6 +54,8 @@ externalSecrets:
       passwordKey:
 
 deployment:
+  # When set to true, no OneUptime deployments are provisioned. Only databases (Redis, ClickHouse, Postgres) will be running.
+  disableDeployments: false
   # Default replica count for all deployments
   replicaCount: 1
   # Update strategy type for all deployments
@@ -126,6 +134,8 @@ postgresql:
     # pg_hba.conf rules. These enable password auth (md5) from any host/IP.
     # Tighten these for production to your pod/service/network CIDRs.
     hbaConfiguration: |-
+      # Local connections (needed for initdb/entrypoint to create databases)
+      local   all             all                                     trust
       # Allow all IPv4 and IPv6 clients with md5 password auth
       host    all             all             0.0.0.0/0               md5
       host    all             all             ::/0                    md5
@@ -668,6 +678,12 @@ slackApp:
   clientId:
   clientSecret:
   signingSecret:
+  # If you're using an existing secret for the configuration, please use this and update accordingly instead of the parameters above.
+  # existingSecret:
+  #   name: "app-secret"
+  #   clientIdKey: clientId
+  #   clientSecretKey: clientSecret
+  #   signingSecretKey: signingSecret
 
 microsoftTeamsApp:
   clientId:

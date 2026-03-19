@@ -41,6 +41,10 @@
     "encryptionSecret": {
       "type": ["string", "null"]
     },
+    "ipWhitelist": {
+      "type": ["string", "null"],
+      "description": "Comma-separated list of probe egress IP addresses for firewall whitelisting. Returned via the /ip-whitelist API endpoint."
+    },
     "externalSecrets": {
       "type": "object",
       "properties": {
@@ -86,6 +90,11 @@
     "deployment": {
       "type": "object",
       "properties": {
+        "disableDeployments": {
+          "type": "boolean",
+          "description": "When set to true, no OneUptime deployments are provisioned. Only databases (Redis, ClickHouse, Postgres) will be running.",
+          "default": false
+        },
         "includeTimestampLabel": {
           "type": "boolean"
         },
@@ -1517,21 +1526,26 @@
       },
       "additionalProperties": false
     },
-    "slackApp": {
-      "type": "object",
-      "properties": {
-        "clientId": {
-          "type": ["string", "null"]
-        },
-        "clientSecret": {
-          "type": ["string", "null"]
-        },
-        "signingSecret": {
-          "type": ["string", "null"]
-        }
-      },
-      "additionalProperties": false
-    },
+	"slackApp": {
+	  "type": "object",
+	  "properties": {
+		"clientId": { "type": ["string", "null"] },
+		"clientSecret": { "type": ["string", "null"] },
+		"signingSecret": { "type": ["string", "null"] },
+		"existingSecret": {
+		  "type": "object",
+		  "properties": {
+		    "name": { "type": "string" },
+		    "clientIdKey": { "type": "string" },
+		    "clientSecretKey": { "type": "string" },
+		    "signingSecretKey": { "type": "string" }
+		  },
+		  "required": ["name", "clientIdKey", "clientSecretKey", "signingSecretKey"],
+		  "additionalProperties": false
+		}
+	  },
+	  "additionalProperties": false
+	},
     "microsoftTeamsApp": {
       "type": "object",
       "properties": {
