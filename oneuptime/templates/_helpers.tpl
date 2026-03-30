@@ -72,6 +72,8 @@ Usage:
   value: {{ ternary "true" "false" $provisionSSL | quote }}
 - name: STATUS_PAGE_CNAME_RECORD
   value: {{ $.Values.statusPage.cnameRecord }}
+- name: DASHBOARD_CNAME_RECORD
+  value: {{ $.Values.dashboard.cnameRecord | default "" }}
 - name: ALLOWED_ACTIVE_MONITOR_COUNT_IN_FREE_PLAN
   value: {{ $.Values.billing.allowedActiveMonitorCountInFreePlan | quote }}
 - name: LOG_LEVEL
@@ -541,6 +543,12 @@ Usage:
   value: {{ $.Values.billing.telemetry.averageMetricRowSizeInBytes | quote }}
 - name: AVERAGE_EXCEPTION_ROW_SIZE_IN_BYTES
   value: {{ $.Values.billing.telemetry.averageExceptionRowSizeInBytes | quote }}
+
+- name: AVERAGE_PROFILE_ROW_SIZE_IN_BYTES
+  value: {{ $.Values.billing.telemetry.averageProfileRowSizeInBytes | quote }}
+
+- name: AVERAGE_PROFILE_SAMPLE_ROW_SIZE_IN_BYTES
+  value: {{ $.Values.billing.telemetry.averageProfileSampleRowSizeInBytes | quote }}
 
 {{- include "oneuptime.env.oneuptimeSecret" . }}
 {{- end }}
