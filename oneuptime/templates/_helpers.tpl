@@ -82,6 +82,10 @@ Usage:
   value: {{ $.Values.httpProtocol }}
 - name: NODE_ENV
   value: {{ $.Values.nodeEnvironment }}
+{{- if $.Values.ssl.skipVerification }}
+- name: NODE_TLS_REJECT_UNAUTHORIZED
+  value: "0"
+{{- end }}
 - name: BILLING_ENABLED
   value: {{ $.Values.billing.enabled | squote }}
 - name: BILLING_PUBLIC_KEY
@@ -661,6 +665,10 @@ spec:
       {{- else if $.Values.podSecurityContext }}
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- if $.hostAliases }}
+      hostAliases:
+        {{- toYaml $.hostAliases | nindent 8 }}
       {{- end }}
       {{- if $.Values.affinity }}
       affinity: {{- $.Values.affinity | toYaml | nindent 8 }}
