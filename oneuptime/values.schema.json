@@ -996,6 +996,21 @@
             },
             "additionalProperties": false
         },
+        "queueDashboard": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "secret": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
         "statusPage": {
             "type": "object",
             "properties": {

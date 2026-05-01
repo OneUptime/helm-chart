@@ -772,5 +772,12 @@ inboundEmail:
   # Optional webhook secret for validating incoming webhooks from the email provider
   webhookSecret:
 
+# BullMQ Queue Dashboard (Bull Board)
+# When enabled, exposes the queue inspector UI at /worker/inspect/queue/<secret>.
+# Both `enabled` and a non-empty `secret` are required to mount the dashboard.
+queueDashboard:
+  enabled: false
+  secret:
+
 keda:
   enabled: true

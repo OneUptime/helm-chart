@@ -553,6 +553,12 @@ Usage:
 - name: AVERAGE_PROFILE_SAMPLE_ROW_SIZE_IN_BYTES
   value: {{ $.Values.billing.telemetry.averageProfileSampleRowSizeInBytes | quote }}
 
+- name: ENABLE_QUEUE_DASHBOARD
+  value: {{ ternary "true" "false" (default false $.Values.queueDashboard.enabled) | squote }}
+
+- name: QUEUE_DASHBOARD_SECRET
+  value: {{ default "" $.Values.queueDashboard.secret | quote }}
+
 {{- include "oneuptime.env.oneuptimeSecret" . }}
 {{- end }}
 
