@@ -202,6 +202,64 @@ externalPostgres:
     key:
 ```
 
+#### Operator-managed PostgreSQL (High Availability)
+
+The built-in PostgreSQL above is a single, standalone instance — no replication or automatic failover. For production high availability, you can instead run PostgreSQL under the [CloudNativePG](https://cloudnative-pg.io) operator, which is **bundled** with this chart and installed automatically when you enable it. This gives you streaming replication, automatic failover, rolling minor upgrades, and a dedicated read-only service.
+
+This is a separate, self-contained `postgresOperator` object — it does **not** read any `postgresql.*` values. Enabling it replaces the built-in StatefulSet:
+
+```yaml
+postgresOperator:
+  cnpg:
+    enabled: true               # installs the operator + an operator-managed cluster
+    instances: 3                # 1 primary + 2 hot-standby replicas
+    imageName: "ghcr.io/cloudnative-pg/postgresql:17.4"   # pin a minor version
+    database: oneuptimedb
+    persistence:
+      size: 50Gi
+```
+
+When `postgresOperator.cnpg.enabled` is `true`, the built-in `postgresql` StatefulSet/Service/ConfigMaps are not rendered, and the OneUptime app connects (as the `postgres` superuser) to the cluster's read-write service `<release>-postgresql-cnpg-rw`.
+
+**Replication** is controlled by `instances`:
+
+- `instances: 1` — a single primary, no replicas.
+- `instances: 3` — one primary plus two hot-standby replicas kept current by PostgreSQL streaming replication. If the primary fails, the operator automatically promotes a healthy replica and re-points the `-rw` service. This is **asynchronous** replication by default. Scaling is online — change `instances` and `helm upgrade`.
+
+For **synchronous** replication (a commit is not acknowledged until standbys confirm it — zero data loss on failover), set `synchronousReplicas`:
+
+```yaml
+postgresOperator:
+  cnpg:
+    enabled: true
+    instances: 3
+    synchronousReplicas: 1      # quorum: every commit waits for >=1 standby
+```
+
+Keep `instances >= synchronousReplicas + 2` so writes don't block when a single standby is briefly unavailable.
+
+**Read scaling.** The operator also creates `<release>-postgresql-cnpg-ro` (load-balanced across replicas) and `<release>-postgresql-cnpg-r` (any instance). Point read-heavy/reporting workloads at `-ro`; the OneUptime app itself uses the `-rw` (primary) endpoint.
+
+**Backups.** Enable scheduled, online **volume-snapshot** backups — native, with no object store or extra components:
+
+```yaml
+postgresOperator:
+  cnpg:
+    enabled: true
+    backup:
+      enabled: true
+      schedule: "0 0 3 * * *"      # 6-field cron (incl. seconds) — 3am daily
+      volumeSnapshotClassName: ""  # your CSI VolumeSnapshotClass (empty = default)
+```
+
+This configures the cluster for CSI snapshot backups and creates a `ScheduledBackup`. Requires a CSI driver with `VolumeSnapshot` support. Restore is a new cluster that bootstraps from a snapshot (optionally to a point in time) — see [Docs/Postgres.md](../../Docs/Postgres.md). Note: CloudNativePG does **not** auto-prune volume snapshots (its `retentionPolicy` is object-store-only), so prune old snapshots yourself, or use object-store backups (Barman Cloud Plugin) for automatic retention + continuous PITR.
+
+**Sharding is not supported.** Neither CloudNativePG nor this chart shards PostgreSQL horizontally, and OneUptime does not need it at typical scale. Scale PostgreSQL with a larger node (vertical), read replicas (above), connection pooling, and PostgreSQL table partitioning for very large tables. True distributed sharding would require the Citus extension (or an operator such as StackGres that wraps it) — a different architecture that is out of scope for this chart.
+
+> **Bundled-operator notes.** The CloudNativePG operator is cluster-scoped and owns the CloudNativePG CRDs. Do not enable it in more than one OneUptime release per cluster, and note that `helm uninstall` can remove the CRDs (and cascade-delete clusters) — back up first. Tune the operator itself under the top-level `cloudnative-pg:` values.
+
+Enabling the operator bootstraps a **fresh, empty** cluster — it does not migrate data from an existing StatefulSet. See [Docs/Postgres.md](../../Docs/Postgres.md) for the migration runbook and day-2 operations.
+
 ### Redis
 
 OneUptime includes a built-in Redis deployment using the official Redis Docker image. Redis is used for caching and session management.
@@ -304,6 +362,30 @@ clickhouse:
   affinity: {}
   resources: {}
 ```
+
+#### Operator-managed ClickHouse (High Availability)
+
+The built-in ClickHouse above is a single, standalone instance — no replication or declarative lifecycle management. For production high availability, you can instead run ClickHouse under the [Altinity ClickHouse operator](https://github.com/Altinity/clickhouse-operator), which is **bundled** with this chart and installed automatically when you enable it. This gives you declarative management, rolling upgrades, sharding, and replication backed by a bundled [ClickHouse Keeper](https://clickhouse.com/docs/en/guides/sre/keeper/clickhouse-keeper) ensemble.
+
+This is a separate, self-contained `clickhouseOperator` object — it does **not** read any `clickhouse.*` values. Enabling it replaces the built-in StatefulSet:
+
+```yaml
+clickhouseOperator:
+  altinity:
+    enabled: true
+    image:
+      tag: "25.3"        # pin a ClickHouse version for production
+    cluster:
+      shardsCount: 1
+      replicasCount: 2   # 2 = HA (uses the bundled Keeper, enabled by default)
+    keeper:
+      enabled: true
+      replicas: 3        # Keeper quorum (1 for dev, 3/5 for production)
+```
+
+When `clickhouseOperator.altinity.enabled` is `true`, the built-in `clickhouse` StatefulSet/Service/ConfigMap are not rendered, and the OneUptime app connects (as the `oneuptime` user) to the operator-managed `ClickHouseInstallation`'s root service `<release>-clickhouse-altinity` on port `8123`. A ClickHouse Keeper ensemble (`<release>-clickhouse-keeper`) is created to coordinate replication; bring your own ZooKeeper/Keeper instead with `clickhouseOperator.altinity.zookeeper.nodes`. See [Docs/Clickhouse.md](../../Docs/Clickhouse.md) for scaling, backups (via [clickhouse-backup](https://github.com/Altinity/clickhouse-backup)), and migration.
+
+> **Bundled-operator notes.** The Altinity operator is cluster-scoped and owns the ClickHouse CRDs. Do not enable it in more than one OneUptime release per cluster. Tune the operator itself (including its management-user credentials) under the top-level `altinity-clickhouse-operator:` values.
 
 #### External ClickHouse Configuration
 
@@ -465,6 +547,8 @@ We use these charts as dependencies for some components. You dont need to instal
 | Chart | Description | Repository | 
 | ----- | ----------- | ---------- | 
 | `keda` | Kubernetes Event-driven Autoscaling | https://kedacore.github.io/charts |
+| `cloudnative-pg` | CloudNativePG operator — only installed when `postgresOperator.cnpg.enabled` is `true` | https://cloudnative-pg.github.io/charts |
+| `altinity-clickhouse-operator` | Altinity ClickHouse operator — only installed when `clickhouseOperator.altinity.enabled` is `true` | https://helm.altinity.com/ |
 
 
 ## Uninstalling OneUptime
