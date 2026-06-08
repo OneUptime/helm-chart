@@ -1,0 +1,50 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/license: MIT
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+    url: https://keybase.io/oneuptime/pgp_keys.asc
+apiVersion: v2
+appVersion: 10.7.0
+dependencies:
+- - condition: keda.enabled
+  name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.17.2
+- - condition: postgresOperator.cnpg.enabled
+  name: cloudnative-pg
+  repository: https://cloudnative-pg.github.io/charts
+  version: 0.28.2
+- - condition: clickhouseOperator.altinity.enabled
+  name: altinity-clickhouse-operator
+  repository: https://helm.altinity.com/
+  version: 0.27.1
+description: The Complete Open-Source Observability Platform
+icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/Static/img/OneUptimePNG/1.png
+name: oneuptime
+type: application
+version: 10.7.0
+
+...
+files:
+  oneuptime-10.7.0.tgz: sha256:c90c9ea40a4dd2eff5d9c707dd99f2ba62e0f4bd8af10e71ab93560453fc4bb0
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJqJp9GCRCdh+SUrAFmlwAAht4QAIFDaS3Amif8lH8obAEwL975
+RJmzFZga88SXcBCqrZJklrWC6rA5KKU8OSp+nW0Rk8FRrHEFupHIg552H9bT2KRE
+1n6FeLx1noMPlu9ELt/LF5klgumDn/87CCck+wMcmDj2P9iHP4bRQVtf0BzyKSiU
++YMapKK7XCcdVzBzSYE0EuGjDwfgQGceuqFA/rLDgQovNLTJWqBiFqmp4uX8XDTb
+JOaQ15AYWf8sYxSnVM/HU4PxQCpwUL+H1Besj+incxJCfkzjkQ05Yy514VHVt3uH
+RemA4l4i9Gn4pbZ1AwFbSHBmJ+SxBOyZdZrcIj8af9+kUDqfo1EuHzf9XdRhNzOI
+XAJ5tfLMDMAihziqx5Q6gxUnFCu2wTa7hJ0ODzbZvkfSB+Sj2FKFWFTNOVELYrmC
+miN8x4sPRFjq8IeW17YToukblxaMJeXb+bgx+1t6cxHmXFC2JTDdvT9bdNXN0i9G
+VSv4hiSXADdlIGsBvLZR5VeSkXPMWautp94aBybzVEK51sCCBo04MKK0nOLBTaVo
+74W1HFxqVSJ34VLfUORIYGkQchPnY1fgeE5+3R+IeczIf/j+ZIUL3xg1gEeZACqR
+BGdqi249sjGFMqPovZMSNPaRrgTCzKRB11/91EVzODnePNnEwTbbKD/OyEVwzQKe
+H1bLGL8AmfCVdO7lzVT7
+=5O0X
+-----END PGP SIGNATURE-----
