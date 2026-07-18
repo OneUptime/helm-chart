@@ -1,0 +1,78 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/license: MIT
+  artifacthub.io/links: |
+    - name: documentation
+      url: https://oneuptime.com/docs
+    - name: source
+      url: https://github.com/OneUptime/oneuptime
+    - name: support
+      url: https://github.com/OneUptime/oneuptime/issues
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+    url: https://keybase.io/oneuptime/pgp_keys.asc
+apiVersion: v2
+appVersion: 11.5.11
+dependencies:
+- - condition: keda.enabled
+  name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.20.1
+- - condition: postgresOperator.cnpg.enabled
+  name: cloudnative-pg
+  repository: https://cloudnative-pg.github.io/charts
+  version: 0.28.2
+- - condition: clickhouseOperator.altinity.enabled
+  name: altinity-clickhouse-operator
+  repository: https://helm.altinity.com/
+  version: 0.27.1
+description: The Complete Open-Source Observability Platform
+home: https://oneuptime.com
+icon: https://raw.githubusercontent.com/OneUptime/oneuptime/master/Home/Static/img/OneUptimePNG/1.png
+keywords:
+- - monitoring
+- - observability
+- - uptime
+- - status-page
+- - incident-management
+- - on-call
+- - apm
+- - log-management
+- - error-tracking
+- - alerting
+- - sre
+- - opentelemetry
+maintainers:
+- - email: hello@oneuptime.com
+  name: OneUptime
+  url: https://oneuptime.com
+name: oneuptime
+sources:
+- - https://github.com/OneUptime/oneuptime
+- - https://github.com/OneUptime/helm-chart
+type: application
+version: 11.5.11
+
+...
+files:
+  oneuptime-11.5.11.tgz: sha256:e17d8b834862f1f0afdfef5709c79b97f09d21cec0df81295f790ccfbc0e3b4b
+-----BEGIN PGP SIGNATURE-----
+
+wsFcBAEBCgAQBQJqW9SYCRCdh+SUrAFmlwAA7xUQAD/R9eXmNRP5L8V4PERBjGAq
+cmSpiKrBD7WVpUpSYp84Yy+fmzRIwH3LV0qVG3A19TJ+4DIGwSFi/LZ3WkspDCcg
+3Cj9v/euYGUEIqegllGgo+E/00UZJh8PTYY9/dkcQ+/4Uc/vnX2C+QI1jmSVXCHS
+c050WdqmiDqB5RJLmgDpctfYBHDodjOaDrDRNRoDiKcz33c5iLqqdVknKt+Z629a
+8Hdrml2a8MR3phxWiWb2s3sJEzm/1hGJ1LJAmWA5HZqsZuKG+zsYdV8Aq6x22p1g
+2tFGwMlh007RIsstuVVaePtNCzipO+ymZlogM5yYHsFJ0vlpaK+WYLJjr9crNe2J
+e0ZAHuYpzJw+qjMixFU+I1o+qeUlBtt64n2DhGSWbBI6+WgXNMM4AEdvoAtkjo9+
+oOZ9VuFQIw4dB48/5m+wUbYkEIpFJB77eRDOMwMTGAIi0Sef1ZG1CT/A8m7STN0u
+KsihrxinGQ1OD5M8nxMvunaAdyyTslI/UMqBczVbGhvzCJjFPkgj/kEnEmyqoo1/
+QsHm9EUUWODYPIysyvrVuPXpLjPGgT4NorOB7vXV3gNpHBvU4eJ1IPBzRrtIsdXT
+xLGUeOCbV9kpOqa4AhEEPDq9SrqbTo9lP1RQK1CB1+dcgl2RaG6dav6UGFLIs7AR
+J/PWHy/mycwtaHO10P6o
+=/Whx
+-----END PGP SIGNATURE-----
