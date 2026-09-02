@@ -299,20 +299,30 @@ data:
           # severity on the log line, so OTel LogRecords arrive at OneUptime
           # with severity_number=0 and render as "Unspecified" on the Logs
           # page. Derive a best-effort severity: route to body-based extraction
-          # when the body carries a recognizable severity keyword (covers
-          # "[ERROR]", "WARN:", " INFO ", etc. used by CoreDNS, most app
-          # frameworks, klog-style Kubernetes components), else fall back to
-          # stdout/stderr mapping. Using a router rather than regex_parser's
-          # on_error keeps this compatible with OTel Collector v0.96.0.
+          # when the body carries a recognizable severity keyword, else fall
+          # back to stdout/stderr mapping. Using a router rather than
+          # regex_parser's on_error keeps this compatible with OTel Collector
+          # v0.96.0.
+          #
+          # The keyword may be delimited by whitespace, brackets, parentheses,
+          # a dot or a double quote. The dot and the quote matter more than
+          # they look: without them the two most common structured formats in
+          # the wild are both missed, and every line they produce falls through
+          # to the stdout/stderr mapping, which brands the whole of a service's
+          # stderr as ERROR.
+          #   * PSR-3 / Monolog  -> "[2026-08-31 07:25:04] app.INFO: ..."
+          #   * Go zap, logrus   -> '{"level":"info","ts":...,"msg":"..."}'
+          # Not covered: klog's single-letter prefix ("I0831 07:25:04.123456"),
+          # which needs its own letter-to-level mapping.
           - type: router
             id: severity-router
             routes:
               - output: parse-severity-from-body
-                expr: 'body matches "(?i)(?:^|[\\s\\[(])(TRACE|DEBUG|INFO|NOTICE|WARN|WARNING|ERROR|ERR|FATAL|CRITICAL|CRIT|PANIC)(?:[\\s\\]:=,)])"'
+                expr: 'body matches "(?i)(?:^|[\\s.\\[(\"])(TRACE|DEBUG|INFO|NOTICE|WARN|WARNING|ERROR|ERR|FATAL|CRITICAL|CRIT|PANIC)(?:[\\s\\]:=,)\"])"'
             default: add-fallback-severity
           - type: regex_parser
             id: parse-severity-from-body
-            regex: '(?i)(?:^|[\s\[(])(?P<severity_text>TRACE|DEBUG|INFO|NOTICE|WARN|WARNING|ERROR|ERR|FATAL|CRITICAL|CRIT|PANIC)(?:[\s\]:=,)])'
+            regex: '(?i)(?:^|[\s.\[("])(?P<severity_text>TRACE|DEBUG|INFO|NOTICE|WARN|WARNING|ERROR|ERR|FATAL|CRITICAL|CRIT|PANIC)(?:[\s\]:=,)"])'
             parse_from: body
             output: severity-parser
           - type: add
@@ -386,6 +396,25 @@ data:
           - key: service.name
             value: "kubernetes-agent-{{ .Values.clusterName }}"
             action: upsert
+          # Node identity. Every receiver in this collector reads
+          # node-local data — /proc and /sys for hostmetrics, this node's
+          # kubelet for kubeletstats and the cAdvisor scrape,
+          # /var/log/pods for filelog — so the node this pod is scheduled
+          # on owns all of it. kubeletstats stamps `k8s.node.name`
+          # itself, but hostmetrics and the Prometheus cAdvisor scrape do
+          # not, so without this every node's `system.*` series arrives
+          # with no node attribution at all and all of them collapse into
+          # one meaningless series. `insert` leaves a receiver-supplied
+          # (or k8sattributes-resolved) value alone.
+          #
+          # It has to be `k8s.node.name`, not `host.name`: OneUptime keys
+          # the k8s.node entity on k8s.cluster.name + k8s.node.name, and
+          # it suppresses Host identity on any resource that already
+          # carries a Kubernetes identity — so a `host.name` here would
+          # populate no entity at all.
+          - key: k8s.node.name
+            value: "${env:NODE_NAME}"
+            action: insert
           - key: oneuptime.agent.version
             value: {{ .Chart.AppVersion | quote }}
             action: upsert
