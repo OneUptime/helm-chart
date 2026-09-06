@@ -1246,13 +1246,11 @@ probes:
     # Probes do not call the Kubernetes API. Keep cluster credentials out of
     # the pod—and therefore out of synthetic browser processes—by default.
     automountServiceAccountToken: false
-    # Whether Custom JavaScript Code monitors on this probe may reach private
-    # network addresses (10.x, 192.168.x, ...). Off by default. Every other
-    # monitor type this probe runs — API, Website, Ping, Port, SSL, DNS, SNMP,
-    # SQL, Synthetic — already reaches whatever host the monitor names; Custom
-    # Code is the one exception, because it executes in the same sandbox as the
-    # workflow Custom JavaScript component and inherits its SSRF guard. Turning
-    # this on does NOT open loopback, link-local or the cloud metadata endpoint.
+    # Private-network opt-in for API, Website, External Status Page and Custom
+    # JavaScript Code monitors on a private probe. Chart-managed probes
+    # auto-register as global probes, so they ignore this value and always
+    # enforce public-only egress. Turning this on for a separately deployed
+    # private probe still does NOT open loopback, link-local or cloud metadata.
     allowPrivateNetworkMonitors: false
     syntheticMonitorScriptTimeoutInMs: 60000
     # Maximum number of isolated browser worker processes started concurrently
@@ -1438,9 +1436,18 @@ testServer:
   extraVolumeMounts: []
 
 openTelemetryExporter:
+  # Server-side exporter settings. headers can contain credentials and are
+  # never serialized into a frontend env.js response.
   endpoint:
   # This can be for example: x-oneuptime-token=<YOUR_ONEUPTIME_TELEMETRY_INGEST_TOKEN>
   headers:
+
+# Browser RUM uses a separate, deliberately public credential. Only use a
+# OneUptime Browser ingestion key with an origin allowlist; never put a Server
+# key or arbitrary collector Authorization header here.
+browserOpenTelemetryExporter:
+  endpoint:
+  browserIngestionKey:
 
 containerSecurityContext:
 podSecurityContext:
