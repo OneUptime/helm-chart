@@ -1,0 +1,80 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/license: MIT
+  artifacthub.io/links: |
+    - name: documentation
+      url: https://oneuptime.com/docs
+    - name: source
+      url: https://github.com/OneUptime/oneuptime
+    - name: support
+      url: https://github.com/OneUptime/oneuptime/issues
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/signKey: |
+    fingerprint: 83F2C1DDF58A052464C4A1729D87E494AC016697
+    url: https://keybase.io/oneuptime/pgp_keys.asc
+apiVersion: v2
+appVersion: 13.0.8
+dependencies:
+- - condition: keda.install,keda.enabled
+  name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.20.1
+- - condition: postgresOperator.cnpg.enabled
+  name: cloudnative-pg
+  repository: https://cloudnative-pg.github.io/charts
+  version: 0.28.2
+- - condition: clickhouseOperator.altinity.enabled
+  name: altinity-clickhouse-operator
+  repository: https://helm.altinity.com/
+  version: 0.27.1
+description: The Complete Open-Source Observability Platform
+home: https://oneuptime.com
+icon: https://oneuptime.com/img/OneUptimePNG/1.png
+keywords:
+- - monitoring
+- - observability
+- - uptime
+- - status-page
+- - incident-management
+- - on-call
+- - apm
+- - log-management
+- - error-tracking
+- - alerting
+- - sre
+- - opentelemetry
+maintainers:
+- - email: hello@oneuptime.com
+  name: OneUptime
+  url: https://oneuptime.com
+name: oneuptime
+sources:
+- - https://github.com/OneUptime/oneuptime
+- - https://github.com/OneUptime/helm-chart
+type: application
+version: 13.0.8
+
+...
+files:
+  oneuptime-13.0.8.tgz: sha256:0829e0b832fa1b9faa4416cdcbec6385ed5903ca2769171bde958542134a5f4f
+
+-----BEGIN PGP SIGNATURE-----
+
+wsG5BAEBCgBtBYJqrr2uCRCdh+SUrAFml0UUAAAAAAAcACBzYWx0QG5vdGF0aW9u
+cy5vcGVucGdwanMub3Jn0w7XzoLsqsN+jiQitLBkCPkHC79S85rYZyvvY38UvboW
+IQSD8sHd9YoFJGTEoXKdh+SUrAFmlwAA83gP/1icoThTgFkNEHSw0RtyFtsbz7Ee
+PXwZ6HfCfkaP34PAP/CoLEf8naQ+njRxYxvnkzB50Q9vijpBwzdzghkwPryrs/2L
+g0ffY1s1vWuFEcWuqlkYyO431a6TYWabdvoWWlByTi704qvQrwwurgiYJBFuToHu
+0KRTK/HNmQsrkTapHuheVGpXMK0/jWuB2Cmh035ptz+cobOYRno665Ryk9y56SHs
+IjKrmFda2j6KPCjERRBar5RhfefbwWGR3LvczIfWuRyHvrShzDyjX9Nr8hSzhjWx
+t7HCGT1g/Lc3uCAtjfhMuzs5VUkX0BvrY4kLPvgLCxmh8xz8yglsmoX787CEM+MI
+XDhNGu6PMDHu2E8ZBBCcsXnfLqIgMYEuxrJ6I5cGNGyvENKLDmiJui9WlEJnxNaQ
+9L7J/p12r3U70QczRTof2R6UCEWhFBeRH8U0uVZoJCpDNvLL0i3EFfoRsb2OruQU
+H7BUCB2eWmHlkRPRmRyzlrzM3D5TGd7/edI/e2AJhrY4TYUi2QHbDeOQxZtO2H+m
+eAvm3aJgbi5GGn58tPubwrxawWNuX15jFyXIzDENjcz2CCjtYL66yWqRzmnUc7XQ
+42WqSKJqWFOP57+Rvva073pzngso92jt9PcMZhg7FgY3phiMBKAsACExE5XRyVG5
+1cmxWzifjL/S0yS2
+-----END PGP SIGNATURE-----
