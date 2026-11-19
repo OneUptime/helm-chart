@@ -60,7 +60,7 @@ The docs are split into focused guides:
 | [Databases](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/databases.md) | PostgreSQL, Valkey, and ClickHouse — built-in, external, and HA operators. |
 | [Local AI with vLLM](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/ai-vllm.md) | Run local LLMs in-cluster for OneUptime's AI features. |
 | [Custom domains](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/custom-domains.md) | Custom status page domains and Let's Encrypt. |
-| [Production checklist](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/production-checklist.md) | Harden your install for production. |
+| [Production checklist](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/production-checklist.md) | What every install needs before real traffic, then high availability and scaling when you need them. |
 | [Troubleshooting](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/troubleshooting.md) | Diagnose performance and health issues. |
 | [Releases & upgrade notes](https://github.com/OneUptime/oneuptime/blob/main/HelmChart/Public/oneuptime/docs/upgrade-notes.md) | Release cadence, breaking changes, and chart dependencies. |
 
@@ -86,8 +86,8 @@ license, or one holding a license whose expiry was never recorded, runs as a
 license expires), until a license is activated, SCIM and audit logging stop:
 your identity provider's SCIM requests are refused and audit logging stops
 recording. Enterprise configuration becomes read-only and the enterprise admin
-dashboards are locked too. Single sign-on (SAML, OIDC and "Require SSO for
-login") is part of both editions and does not depend on the license.
+dashboards are locked too. Single sign-on (SAML, OIDC and "Require SSO to
+sign in") is part of both editions and does not depend on the license.
 Everything resumes, without a restart, as soon as a license is activated, and
 core monitoring is never affected.
 
